@@ -1,0 +1,3028 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<title>Relatório mensal · demonstração</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;0,600;0,700;0,800;1,600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{
+  --navy:#050d9e;
+  --navy-dark:#02053b;
+  --navy-deep:#00082b;
+  --bright:#0096fa;
+  --bright-2:#37c8f0;
+  --coral:#f76556;
+  --bg:#f4f6fb;
+  --surface:#ffffff;
+  --surface-sunk:#eceffa;
+  --ink:#0a0e2a;
+  --muted:#5b607c;
+  --line:#e0e3f0;
+  --pos:#0f8f5f;
+  --pos-soft:#e1f6ed;
+  --neu:#e0a51a;
+  --neg:#d1403a;
+  --neg-soft:#fce7e5;
+  --shadow:0 1px 2px rgba(5,13,60,.04),0 10px 26px rgba(5,13,60,.06);
+  --font-display:'Montserrat', Arial, sans-serif;
+  --font-body:'Montserrat', Arial, sans-serif;
+  --font-mono:'IBM Plex Mono', ui-monospace, monospace;
+  --side-w:236px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);-webkit-font-smoothing:antialiased;overflow-x:clip}
+body{line-height:1.55;font-size:15px}
+img{max-width:100%;display:block}
+h1,h2,h3{font-family:var(--font-display);margin:0;font-weight:800;letter-spacing:-.01em}
+a{color:inherit}
+
+/* ===================== LOGIN GATE ===================== */
+#gate{position:fixed;inset:0;z-index:200;background:var(--navy-deep);display:flex;align-items:center;justify-content:center;padding:24px;overflow:hidden}
+#gate:before{content:'';position:absolute;top:-20%;right:-10%;width:60%;height:140%;background:linear-gradient(160deg,var(--bright),var(--navy));transform:rotate(-8deg);opacity:.9}
+#gate:after{content:'';position:absolute;bottom:-30%;left:-15%;width:50%;height:100%;background:var(--coral);border-radius:50%;filter:blur(90px);opacity:.25}
+.gate-card{position:relative;z-index:2;background:#fff;border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.35);padding:38px 34px;width:100%;max-width:368px}
+.gate-card .glogo{width:46px;height:46px;border-radius:11px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;margin-bottom:18px}
+.gate-card h1{font-size:21px;color:var(--ink)}
+.gate-card p{font-size:13px;color:var(--muted);margin:6px 0 20px;font-weight:500}
+.gate-card input{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:11px;font-family:var(--font-body);font-size:14px;font-weight:600;margin-bottom:10px}
+.gate-card input:focus{outline:none;border-color:var(--bright)}
+.gate-card button{width:100%;padding:13px;background:var(--navy);color:#fff;border:none;border-radius:11px;font-family:var(--font-display);font-size:14px;font-weight:700;cursor:pointer;margin-top:6px}
+.gate-card button:hover{background:var(--navy-dark)}
+.gate-err{color:var(--neg);font-size:12.5px;min-height:16px;margin-top:8px;font-weight:600}
+#gate.hidden{display:none}
+
+/* ===================== HEADER ===================== */
+header.top{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:13px 24px}
+.lockup{display:flex;align-items:center;gap:14px}
+.lockup img{height:30px;width:auto;object-fit:contain}
+#logo-marca{height:40px}
+.lockup .divider{width:1px;height:26px;background:var(--line)}
+.title-block{display:flex;flex-direction:column;line-height:1.1}
+.title-block .t1{font-weight:800;font-size:15px}
+.title-block .t2{font-size:10.5px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+.header-right{display:flex;align-items:center;gap:14px}
+.demo-tag{display:inline-flex;align-items:center;background:#d1403a;color:#fff;font:800 12px/1 Arial,sans-serif;letter-spacing:.08em;padding:8px 12px;border-radius:999px;white-space:nowrap;box-shadow:0 0 0 3px rgba(209,64,58,.2)}
+@media(max-width:640px){.demo-tag{font-size:9px;padding:5px 8px;letter-spacing:.04em}}
+
+.period-select{position:relative}
+.period-btn{display:flex;align-items:center;gap:9px;background:var(--surface-sunk);border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer;font-family:var(--font-body)}
+.period-btn:hover{border-color:var(--bright)}
+.pl-text{display:flex;flex-direction:column;line-height:1.1;text-align:left}
+.pl-tipo{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--navy)}
+.pl-label{font-size:13px;font-weight:700;color:var(--ink)}
+.pl-caret{color:var(--navy);font-size:10px}
+.period-menu{position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 30px rgba(5,13,60,.14);padding:8px;min-width:210px;display:none;z-index:60}
+.period-menu.open{display:block}
+.pm-group{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#a7abc9;padding:8px 10px 4px}
+.pm-item{display:flex;flex-direction:column;width:100%;text-align:left;background:none;border:none;border-radius:9px;padding:9px 10px;cursor:pointer;font-family:var(--font-body);font-size:13px;font-weight:700;color:var(--ink)}
+.pm-item:hover{background:var(--surface-sunk)}
+.pm-item.active{background:#e6f2fe}
+.pm-range{font-size:11px;font-weight:500;color:var(--muted);margin-top:1px}
+@media(max-width:760px){.pl-text{display:none}}
+
+/* ===================== SIDEBAR — sticky, rola naturalmente com a página ===================== */
+.side{display:none;flex:0 0 180px;padding:22px 0 24px;position:sticky;top:88px;align-self:flex-start}
+.side-title{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#a7abc9;padding:0 12px;margin:2px 0 10px}
+.side-link{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;color:var(--muted);font-size:13px;font-weight:700;text-decoration:none;border-left:2.5px solid transparent;margin-bottom:2px;cursor:pointer;white-space:nowrap}
+.side-link .n{font-size:10.5px;font-weight:800;width:19px;height:19px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;border-radius:6px;background:var(--surface-sunk);color:var(--muted)}
+.side-link:hover{color:var(--ink);background:var(--surface-sunk)}
+.side-link.active{color:var(--navy);background:#e6f2fe;border-left-color:var(--bright)}
+.side-link.active .n{background:var(--navy);color:#fff}
+section.block{scroll-margin-top:110px;margin-top:46px}
+@media(min-width:1041px){ .side{display:block} }
+
+/* ===================== LAYOUT / CONTENT CENTRALIZADO ===================== */
+main{padding:0 0 90px}
+.content-outer{padding:0 32px;display:flex;gap:32px}
+.content-area{flex:1 1 auto;min-width:0;max-width:1000px;margin:0 auto}
+
+/* ===================== HERO ===================== */
+.hero{position:relative;background:var(--navy-deep);color:#fff;padding:54px 0 0}
+.hero-bg{position:absolute;inset:0;overflow:hidden;z-index:0}
+.hero-bg:before{content:'';position:absolute;top:-30%;right:-8%;width:52%;height:180%;background:linear-gradient(160deg,var(--bright),var(--navy) 70%);transform:rotate(-10deg)}
+.hero-inner{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:0 32px}
+.hero .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--bright-2);font-weight:600}
+.hero h1{font-size:clamp(30px,4.6vw,48px);line-height:1.08;margin-top:14px;max-width:15em;text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--bright-2)}
+@media(min-width:901px){.hero h1{max-width:12.5em;font-size:clamp(28px,3.5vw,42px)}.hero .dek{max-width:min(34em,42%)}}
+#gate{display:none !important}
+.hero .dek{font-size:15.5px;color:#c7ccef;max-width:38em;margin-top:14px;font-weight:500;line-height:1.65}
+
+
+/* ===================== SECTIONS ===================== */
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.sec-head .num{font-size:11px;font-weight:800;color:var(--navy);background:#e6f2fe;width:25px;height:25px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;align-self:center;font-family:var(--font-mono)}
+.sec-head h2{font-size:20px;font-weight:800}
+.sec-head .hint{margin-left:auto;font-size:11.5px;color:var(--muted);font-weight:600}
+
+p.lead{font-size:15px;color:var(--ink);opacity:.85;line-height:1.75;text-align:justify}
+
+.grid{display:grid;gap:14px}
+.g-4{grid-template-columns:repeat(4,1fr)}
+.g-2{grid-template-columns:repeat(2,1fr)}
+.g-3{grid-template-columns:repeat(3,1fr)}
+.segbar{display:flex;gap:3px;height:12px;margin:10px 0}
+.seg{position:relative;border-radius:5px;cursor:default}
+.seg:hover::after{content:attr(data-tip);position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:#00082b;color:#fff;font-size:11.5px;font-weight:700;padding:5px 9px;border-radius:7px;white-space:nowrap;z-index:6}
+.daylinks{margin-top:14px;display:grid;gap:8px}
+.daylink{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:13px;font-weight:600;padding:10px 14px;background:#fff;border:1px solid var(--line);border-radius:10px}
+.daylink span{color:var(--muted);font-weight:500}
+.daylink a{color:var(--bright);font-weight:700;white-space:nowrap;text-decoration:none}
+@media(max-width:800px){.g-4{grid-template-columns:repeat(2,1fr)}.g-2{grid-template-columns:1fr}.g-3{grid-template-columns:1fr}}
+@media(max-width:520px){.g-4{grid-template-columns:1fr}}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+.kpi .label{font-size:11.5px;color:var(--muted);font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+.kpi .value{font-family:var(--font-display);font-size:30px;font-weight:800;margin-top:6px;line-height:1;font-variant-numeric:tabular-nums}
+.kpi .value.pos{color:var(--pos)}
+.kpi .value.neg{color:var(--neg)}
+.kpi .value.neu{color:var(--neu)}
+.kpi .foot{margin-top:9px;font-size:12.5px;color:var(--muted);font-weight:600}
+.kpi-hero{background:linear-gradient(160deg,#fff,#e6f2fe);border-color:#cfe3fb}
+
+.chart-panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px 22px;box-shadow:var(--shadow)}
+.chart-title{font-size:14px;font-weight:800;margin:0 0 2px}
+.chart-sub{font-size:12px;color:var(--muted);margin:0 0 14px;font-weight:600}
+.chart-wrap{position:relative;height:220px}
+.chart-wrap.tall{height:280px}
+.chart-wrap.short{height:170px}
+
+/* sentimento: título esquerda / legenda meio / pizza direita */
+.sent-layout{display:grid;grid-template-columns:1fr auto auto;gap:24px;align-items:center}
+.sent-layout.tight3{grid-template-columns:auto auto auto;justify-content:center}
+.sent-layout.tight2{grid-template-columns:auto auto;justify-content:center}
+@media(max-width:760px){.sent-layout,.sent-layout.tight3,.sent-layout.tight2{grid-template-columns:1fr;justify-content:normal}}
+.saud-box{border-left:1px solid var(--line);padding-left:24px}
+@media(max-width:760px){.saud-box{border-left:none;border-top:1px solid var(--line);padding-left:0;padding-top:16px}}
+.sent-legend{display:flex;flex-direction:column;gap:12px;min-width:150px}
+.sent-legend .li{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:700}
+.sent-legend .li b{margin-left:auto;font-variant-numeric:tabular-nums;font-family:var(--font-display)}
+.sent-legend .dot{width:11px;height:11px;border-radius:3px;flex:0 0 auto}
+.sent-donut-wrap{position:relative;width:210px;height:210px}
+
+.hbar-list{display:flex;flex-direction:column;gap:11px}
+.hbar-row{position:relative;display:grid;grid-template-columns:128px 1fr 34px;align-items:center;gap:10px}
+.hbar-row.has-pop{cursor:help}
+.hbar-label{font-size:12.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbar-track{background:var(--surface-sunk);border-radius:5px;height:14px;overflow:hidden}
+.subpop{position:absolute;top:100%;margin-top:8px;background:var(--navy-deep);color:#fff;padding:10px 12px;border-radius:10px;font-size:11.5px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .08s;z-index:40;box-shadow:0 10px 24px rgba(0,0,0,.28)}
+.hbar-row:hover .subpop{opacity:1}
+.kpi-hover{position:relative;cursor:help}
+.kpi-hover:hover .subpop{opacity:1}
+.kpi-hover .subpop{top:100%;left:50%;right:auto;transform:translateX(-50%);margin-top:10px;white-space:nowrap;min-width:190px;width:max-content;max-width:260px}
+.kpi-hover .subpop-row{gap:14px}
+.subpop-title{font-weight:800;font-family:var(--font-display);margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.18);color:var(--bright-2);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase}
+.subpop-row{display:flex;align-items:center;gap:18px;justify-content:space-between;line-height:1.6;font-family:var(--font-mono)}
+.subpop-row b{color:#fff;font-weight:700}
+.subpop-row span{color:#c7ccef}
+
+/* ===================== TOGGLE — excluir pico do Álvaro ===================== */
+.outlier-bar{display:flex;align-items:flex-start;gap:12px;background:var(--surface-sunk);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.outlier-bar-text{font-size:12.5px;color:var(--muted);line-height:1.5}
+.outlier-bar-text b{color:var(--ink)}
+.switch{position:relative;display:inline-block;width:38px;height:22px;flex:0 0 auto;margin-top:1px;cursor:pointer}
+.switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+.switch-track{position:absolute;inset:0;background:#c7cce8;border-radius:999px;transition:.15s}
+.switch-thumb{position:absolute;top:2px;left:2px;width:18px;height:18px;background:#fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:.15s}
+.switch input:checked + .switch-track{background:var(--navy)}
+.switch input:checked + .switch-track .switch-thumb{transform:translateX(16px)}
+
+.topic-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 20px;box-shadow:var(--shadow)}
+.topic-card-title{font-size:13.5px;font-weight:800;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+.topic-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.topic-list li{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;font-weight:600;color:var(--ink)}
+.topic-list li b{font-family:var(--font-mono);font-weight:700;color:var(--muted);font-size:12px;flex:none}
+.hbar-fill{background:var(--navy);height:100%;border-radius:5px}
+.hbar-val{font-size:12px;font-weight:700;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums;font-family:var(--font-mono)}
+
+.note{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px 22px;box-shadow:var(--shadow)}
+.note .note-label{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--navy);margin-bottom:8px}
+.note .insight-title{font-size:19px;font-weight:800;line-height:1.35;color:var(--ink);margin-bottom:10px;padding-bottom:12px;border-bottom:1px solid var(--line);font-family:var(--font-display)}
+.note .insight-text{font-size:14.5px;line-height:1.75;color:var(--ink);opacity:.85;text-align:justify}
+
+.spotlight{display:flex;gap:1.2rem}
+.spotlight .badge{flex:none;width:50px;height:50px;border-radius:12px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;font-family:var(--font-display)}
+.spotlight .stats{display:flex;gap:1.4rem;margin-top:.9rem;flex-wrap:wrap}
+.spotlight .stats div{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+.spotlight .stats b{display:block;font-size:20px;color:var(--ink);font-weight:800;margin-top:2px;font-variant-numeric:tabular-nums;font-family:var(--font-display)}
+.eyebrow-tag{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--navy);font-weight:800}
+.post-link{display:inline-flex;align-items:center;gap:5px;margin-top:10px;font-size:12.5px;font-weight:800;color:var(--bright);text-decoration:none}
+.post-link:hover{text-decoration:underline}
+a.card-link{text-decoration:none;display:block;transition:.15s}
+a.card-link:hover{border-color:var(--bright);box-shadow:0 2px 4px rgba(5,13,60,.06),0 14px 30px rgba(0,150,250,.12)}
+
+blockquote{font-family:var(--font-display);font-style:italic;font-size:19px;line-height:1.5;color:var(--ink);margin:1.3rem 0;padding-left:1.2rem;border-left:3px solid var(--bright);font-weight:600}
+blockquote cite{display:block;font-family:var(--font-body);font-style:normal;font-size:12px;color:var(--muted);margin-top:.6rem;font-weight:600}
+
+/* nuvem de termos */
+.cloud{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline}
+.cloud .chip{position:relative;display:inline-flex;align-items:baseline;gap:6px;background:var(--surface-sunk);border-radius:10px;padding:6px 12px;font-weight:800;color:var(--navy);cursor:default}
+.cloud .chip .badge-n{font-family:var(--font-mono);font-size:10.5px;font-weight:700;color:#fff;background:var(--navy);border-radius:999px;padding:1px 7px}
+
+/* emojis grandes */
+.emoji-row{display:flex;justify-content:space-between;gap:8px}
+.emoji-cell{position:relative;flex:1;display:flex;align-items:center;justify-content:center;padding:10px 0;border-radius:14px;cursor:pointer;transition:.15s}
+.emoji-cell:hover{background:var(--surface-sunk)}
+.emoji-cell .em{font-size:44px;line-height:1}
+.emoji-cell .tip{position:absolute;bottom:100%;left:50%;transform:translateX(-50%) translateY(-6px);background:var(--navy-deep);color:#fff;font-family:var(--font-mono);font-size:12px;font-weight:700;padding:5px 10px;border-radius:8px;white-space:nowrap;opacity:0;pointer-events:none;transition:.12s}
+.emoji-cell .tip:after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--navy-deep)}
+.emoji-cell:hover .tip,.emoji-cell.tap .tip{opacity:1}
+
+.info-i{position:relative;display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:var(--surface-sunk);color:var(--muted);font-size:10px;font-weight:800;font-style:italic;text-transform:none;font-family:var(--font-display);cursor:help;margin-left:6px;vertical-align:middle}
+.info-i:hover{background:var(--navy);color:#fff}
+.info-i .tip{position:absolute;bottom:135%;left:50%;transform:translateX(-50%);background:var(--navy-deep);color:#fff;font-family:var(--font-body);font-size:11.5px;font-weight:500;line-height:1.4;font-style:normal;padding:8px 10px;border-radius:8px;width:220px;text-align:left;opacity:0;pointer-events:none;transition:opacity .06s;z-index:30}
+.info-i:hover .tip{opacity:1}
+
+.reco{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1.1rem 1.3rem;margin-bottom:.7rem;display:flex;gap:1rem}
+.reco .n{font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--navy);flex:none;width:1.6em}
+.reco h3{font-size:15px;margin-bottom:.3rem;font-weight:800}
+.reco p{font-size:13.5px;margin:0;color:var(--muted);font-weight:500}
+
+.footer{margin-top:70px;padding-top:22px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;color:var(--muted);font-size:12px;font-weight:600}
+.footer img{height:32px;opacity:1}
+
+@media print{header.top,.side,.period-select{display:none!important}}
+</style>
+
+<div id="gate">
+  <form class="gate-card" id="login-form">
+    <div class="glogo">BF</div>
+    <h1>Relatório mensal</h1>
+    <p>Acesso restrito · versão demonstrativa · dados fictícios</p>
+    <input id="login-user" type="text" placeholder="Usuário" autocomplete="username" required>
+    <input id="login-pass" type="password" placeholder="Senha" autocomplete="current-password" required>
+    <button type="submit">Entrar</button>
+    <div class="gate-err" id="login-err"></div>
+  </form>
+</div>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="lockup">
+      <img id="logo-marca" alt="Logo do cliente">
+      <div class="divider"></div>
+      <div class="title-block">
+        <span class="t1">Relatório mensal</span>
+        <span class="t2">Social listening</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="demo-tag" role="note">DADOS FICTÍCIOS</span>
+      <div class="period-select" id="period-select">
+        <button class="period-btn" id="period-btn" type="button" onclick="togglePeriod()">
+          <span class="pl-text"><span class="pl-tipo" id="pl-tipo">Mensal</span><span class="pl-label" id="pl-label">Março 2025</span></span>
+          <span class="pl-caret">▾</span>
+        </button>
+        <div class="period-menu" id="period-menu"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-inner" style="padding-bottom:48px">
+    <span class="eyebrow" id="hero-eyebrow"></span>
+    <h1 id="hero-h1"></h1>
+    <p class="dek" id="hero-dek"></p>
+  </div>
+</div>
+
+<main>
+  <div class="content-outer">
+    <aside class="side" id="side"></aside>
+    <div class="content-area" id="content"></div>
+  </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+/* ==== periods — novos meses entram aqui, em ordem cronológica ==== */
+const PERIODS = [
+  { id:'2025-03', label:'Março 2025', range:'01/03 – 31/03/2025' },
+  { id:'2025-04', label:'Abril 2025', range:'01/04 – 30/04/2025' },
+];
+let activePeriod = PERIODS[PERIODS.length-1].id;
+let excludeOutlier = false;
+
+/* ==== dataset por período ==== */
+const DATA = {
+  '2025-03': {
+    "hero": {
+      "eyebrow": "● Relatório mensal · março 2025 · dados fictícios",
+      "h1": "Um <em>pico de conversa</em> marcou março: o dia 19/03 teve 928 menções",
+      "dek": "Em março, a marca somou 6.987 menções no Instagram, Facebook e TikTok. Fora do pico, o volume ficou entre 113 e 260 menções por dia. Este relatório é uma versão demonstrativa: todos os números, nomes e posts são inventados."
+    },
+    "diasLabel": "01 a 31 de março",
+    "outBar": {
+      "title": "Excluir o pico de março (18 a 20/03)",
+      "desc": "Substitui os dias 18 a 20/03 pela média dos demais dias do mês (185 menções/dia), para ver o ritmo habitual da marca",
+      "hover": "O filtro recalcula o total de menções, o volume diário, o volume por dia da semana e a saudabilidade. Os demais recortes continuam mostrando o mês completo."
+    },
+    "outShort": "sem o pico",
+    "outNote": "O filtro recalcula menções, volume diário e volume por dia da semana. Os demais recortes seguem mostrando o mês completo.",
+    "txt": {
+      "vol": "O gráfico mostra o volume de menções dia a dia em março. Fora do pico, o volume ficou entre 113 e 260 por dia. Toque nas barras para ver o valor exato de cada dia.",
+      "volEx": "O gráfico mostra a evolução diária com os dias 18 a 20/03 substituídos pela média dos demais (185 por dia).",
+      "sem": "Este gráfico soma as menções de cada dia do mês por dia da semana. Toque nas barras para ver o valor exato.",
+      "semEx": "Este gráfico soma as menções por dia da semana, com os dias do pico substituídos pela média dos demais dias do mês.",
+      "semSub": "Soma de todas as ocorrências de cada dia da semana no mês, incluindo o pico",
+      "semSubEx": "Soma de todas as ocorrências de cada dia da semana no mês, com o pico substituído pela média",
+      "sent": "Neutro lidera (45,5%), seguido de positivo (39,6%) e negativo (14,8%). A saudabilidade, que mede a fatia de menções positivas ou neutras, é de 83,0%.",
+      "genero": "Em dados reais, a maioria dos perfis não expõe gênero publicamente. Os números aqui são fictícios.",
+      "termos": "Os termos mais citados do mês aparecem em tamanho proporcional à frequência (exemplo ilustrativo).",
+      "posts": ""
+    },
+    "mencoes": 6987,
+    "mencoesSentClassificadas": 6811,
+    "sentimento": {
+      "pos": 39.61,
+      "neu": 45.54,
+      "neg": 14.84,
+      "posN": 2698,
+      "neuN": 3102,
+      "negN": 1011
+    },
+    "internoExterno": {
+      "total": {
+        "proprio": 3160,
+        "externo": 3827
+      },
+      "pos": {
+        "proprio": 1281,
+        "externo": 1417
+      },
+      "neu": {
+        "proprio": 1615,
+        "externo": 1487
+      },
+      "neg": {
+        "proprio": 374,
+        "externo": 637
+      }
+    },
+    "semana": [
+      {
+        "nm": "Dom",
+        "v": 1100
+      },
+      {
+        "nm": "Seg",
+        "v": 1026
+      },
+      {
+        "nm": "Ter",
+        "v": 879
+      },
+      {
+        "nm": "Qua",
+        "v": 1421
+      },
+      {
+        "nm": "Qui",
+        "v": 1137
+      },
+      {
+        "nm": "Sex",
+        "v": 666
+      },
+      {
+        "nm": "Sáb",
+        "v": 758
+      }
+    ],
+    "diario": [
+      225,
+      253,
+      229,
+      225,
+      240,
+      260,
+      158,
+      157,
+      241,
+      231,
+      157,
+      134,
+      224,
+      187,
+      146,
+      133,
+      247,
+      372,
+      928,
+      495,
+      150,
+      113,
+      245,
+      126,
+      125,
+      119,
+      158,
+      171,
+      117,
+      228,
+      193
+    ],
+    "semOutlier": {
+      "mencoes": 5747,
+      "saudFixed": 83.0,
+      "semana": [
+        {
+          "nm": "Dom",
+          "v": 1100
+        },
+        {
+          "nm": "Seg",
+          "v": 1026
+        },
+        {
+          "nm": "Ter",
+          "v": 692
+        },
+        {
+          "nm": "Qua",
+          "v": 678
+        },
+        {
+          "nm": "Qui",
+          "v": 827
+        },
+        {
+          "nm": "Sex",
+          "v": 666
+        },
+        {
+          "nm": "Sáb",
+          "v": 758
+        }
+      ],
+      "diario": [
+        225,
+        253,
+        229,
+        225,
+        240,
+        260,
+        158,
+        157,
+        241,
+        231,
+        157,
+        134,
+        224,
+        187,
+        146,
+        133,
+        247,
+        185,
+        185,
+        185,
+        150,
+        113,
+        245,
+        126,
+        125,
+        119,
+        158,
+        171,
+        117,
+        228,
+        193
+      ]
+    },
+    "redes": [
+      {
+        "l": "Instagram",
+        "v": 6525,
+        "pct": 93.4,
+        "hex": "#0096fa"
+      },
+      {
+        "l": "TikTok",
+        "v": 286,
+        "pct": 4.1,
+        "hex": "#f76556"
+      },
+      {
+        "l": "Facebook",
+        "v": 176,
+        "pct": 2.5,
+        "hex": "#050d9e"
+      }
+    ],
+    "genero": [
+      {
+        "l": "Desconhecido",
+        "v": 69.8,
+        "n": 4876,
+        "hex": "#c7cce8"
+      },
+      {
+        "l": "Feminino",
+        "v": 15.1,
+        "n": 1055,
+        "hex": "#f76556"
+      },
+      {
+        "l": "Masculino",
+        "v": 15.1,
+        "n": 1055,
+        "hex": "#0096fa"
+      }
+    ],
+    "topUsuarios": [
+      {
+        "nm": "Perfil Exemplo 01",
+        "v": 114
+      },
+      {
+        "nm": "Perfil Exemplo 02",
+        "v": 113
+      },
+      {
+        "nm": "Perfil Exemplo 03",
+        "v": 111
+      },
+      {
+        "nm": "Perfil Exemplo 04",
+        "v": 93
+      },
+      {
+        "nm": "Perfil Exemplo 05",
+        "v": 88
+      },
+      {
+        "nm": "Perfil Exemplo 06",
+        "v": 67
+      },
+      {
+        "nm": "Perfil Exemplo 07",
+        "v": 40
+      },
+      {
+        "nm": "Perfil Exemplo 08",
+        "v": 30
+      }
+    ],
+    "hashtagsConsumidor": [
+      {
+        "nm": "#Treino",
+        "v": 156
+      },
+      {
+        "nm": "#Saude",
+        "v": 129
+      },
+      {
+        "nm": "#Academia",
+        "v": 105
+      },
+      {
+        "nm": "#Musculacao",
+        "v": 98
+      },
+      {
+        "nm": "#Bemestar",
+        "v": 96
+      },
+      {
+        "nm": "#Verao",
+        "v": 90
+      },
+      {
+        "nm": "#Fitness",
+        "v": 83
+      },
+      {
+        "nm": "#MarcaExemplo",
+        "v": 46
+      }
+    ],
+    "emojis": [
+      {
+        "em": "❤️",
+        "l": "Coração",
+        "v": 234
+      },
+      {
+        "em": "💪",
+        "l": "Braço forte",
+        "v": 192
+      },
+      {
+        "em": "🔥",
+        "l": "Fogo",
+        "v": 117
+      },
+      {
+        "em": "👏",
+        "l": "Palmas",
+        "v": 107
+      },
+      {
+        "em": "😂",
+        "l": "Chorando de rir",
+        "v": 97
+      }
+    ],
+    "assuntos": [
+      {
+        "nm": "Academia",
+        "v": 118
+      },
+      {
+        "nm": "Treino",
+        "v": 94
+      },
+      {
+        "nm": "Verão",
+        "v": 74
+      },
+      {
+        "nm": "Promoção",
+        "v": 73
+      },
+      {
+        "nm": "Unidade Centro",
+        "v": 47
+      },
+      {
+        "nm": "Aula coletiva",
+        "v": 37
+      },
+      {
+        "nm": "Plano",
+        "v": 24
+      },
+      {
+        "nm": "Professor",
+        "v": 20
+      }
+    ],
+    "assuntosNota": "Texto de exemplo comentando os assuntos mais citados do mês (dados fictícios).",
+    "usuarioTags": [
+      {
+        "l": "Cliente",
+        "n": 715,
+        "pct": 60.2,
+        "hex": "#050d9e"
+      },
+      {
+        "l": "Não cliente",
+        "n": 284,
+        "pct": 23.9,
+        "hex": "#c7cce8"
+      },
+      {
+        "l": "Colaboradores",
+        "n": 94,
+        "pct": 7.9,
+        "hex": "#f76556"
+      },
+      {
+        "l": "Parceiros",
+        "n": 59,
+        "pct": 5.0,
+        "hex": "#e0a51a"
+      },
+      {
+        "l": "Influenciadores",
+        "n": 35,
+        "pct": 2.9,
+        "hex": "#0096fa"
+      }
+    ],
+    "categorizacao": [
+      {
+        "l": "Engajamento",
+        "n": 2364,
+        "pct": 33.8,
+        "hex": "#37c8f0"
+      },
+      {
+        "l": "Elogio",
+        "n": 1000,
+        "pct": 14.3,
+        "hex": "#0f8f5f"
+      },
+      {
+        "l": "Dúvida",
+        "n": 786,
+        "pct": 11.2,
+        "hex": "#0096fa"
+      },
+      {
+        "l": "Spam",
+        "n": 643,
+        "pct": 9.2,
+        "hex": "#a7abc9"
+      },
+      {
+        "l": "Tema Sensível",
+        "n": 428,
+        "pct": 6.1,
+        "hex": "#02053b"
+      },
+      {
+        "l": "Crítica",
+        "n": 357,
+        "pct": 5.1,
+        "hex": "#d1403a"
+      },
+      {
+        "l": "Reclamação",
+        "n": 285,
+        "pct": 4.1,
+        "hex": "#f76556"
+      },
+      {
+        "l": "Solicitação",
+        "n": 214,
+        "pct": 3.1,
+        "hex": "#050d9e"
+      },
+      {
+        "l": "Sugestão",
+        "n": 71,
+        "pct": 1.0,
+        "hex": "#e0a51a"
+      }
+    ],
+    "categorizacaoDetalhe": {
+      "Tema Sensível": [
+        {
+          "l": "Assunto A",
+          "n": 68
+        },
+        {
+          "l": "Assunto B",
+          "n": 56
+        },
+        {
+          "l": "Assunto C",
+          "n": 14
+        }
+      ],
+      "Elogio": [
+        {
+          "l": "Influenciador",
+          "n": 98
+        },
+        {
+          "l": "Marca",
+          "n": 80
+        },
+        {
+          "l": "Campanha",
+          "n": 61
+        },
+        {
+          "l": "Professor",
+          "n": 58
+        },
+        {
+          "l": "Infraestrutura",
+          "n": 17
+        }
+      ],
+      "Crítica": [
+        {
+          "l": "Atendimento",
+          "n": 107
+        },
+        {
+          "l": "Marca",
+          "n": 94
+        },
+        {
+          "l": "Infraestrutura",
+          "n": 88
+        },
+        {
+          "l": "Preço",
+          "n": 33
+        }
+      ],
+      "Dúvida": [
+        {
+          "l": "Valores",
+          "n": 51
+        },
+        {
+          "l": "Planos",
+          "n": 47
+        },
+        {
+          "l": "Unidades",
+          "n": 42
+        },
+        {
+          "l": "Horários",
+          "n": 19
+        }
+      ],
+      "Sugestão": [
+        {
+          "l": "Parceria",
+          "n": 60
+        },
+        {
+          "l": "Ampliação",
+          "n": 50
+        },
+        {
+          "l": "Aplicativo",
+          "n": 9
+        }
+      ],
+      "Reclamação": [
+        {
+          "l": "Insatisfação",
+          "n": 105
+        },
+        {
+          "l": "Atendimento da unidade",
+          "n": 39
+        },
+        {
+          "l": "Cobrança",
+          "n": 25
+        },
+        {
+          "l": "Infraestrutura",
+          "n": 23
+        }
+      ],
+      "Engajamento": [
+        {
+          "l": "Marcação em foto",
+          "n": 98
+        },
+        {
+          "l": "Menção em comentário",
+          "n": 20
+        },
+        {
+          "l": "Emoji",
+          "n": 15
+        },
+        {
+          "l": "Saudação",
+          "n": 9
+        }
+      ],
+      "Solicitação": [
+        {
+          "l": "Atendimento no privado",
+          "n": 110
+        },
+        {
+          "l": "Parceria",
+          "n": 67
+        }
+      ],
+      "Spam": [
+        {
+          "l": "Mensagem não relacionada",
+          "n": 95
+        },
+        {
+          "l": "Divulgação",
+          "n": 70
+        },
+        {
+          "l": "Links",
+          "n": 30
+        }
+      ]
+    },
+    "sentTemas": {
+      "lead": "Para entender o que sustenta cada sentimento, cruzamos o sentimento de cada menção com as tags de motivo e de assunto aplicadas a ela. Todos os números deste exemplo são fictícios.",
+      "cols": [
+        {
+          "l": "Positivo",
+          "hex": "#0f8f5f",
+          "n": 2698,
+          "motivos": [
+            {
+              "nm": "Engajamento",
+              "v": 632
+            },
+            {
+              "nm": "Elogio",
+              "v": 581
+            },
+            {
+              "nm": "Dúvida",
+              "v": 518
+            },
+            {
+              "nm": "Spam",
+              "v": 255
+            },
+            {
+              "nm": "Solicitação",
+              "v": 252
+            }
+          ],
+          "assuntos": [
+            {
+              "nm": "Influenciador",
+              "v": 127
+            },
+            {
+              "nm": "Marca",
+              "v": 121
+            },
+            {
+              "nm": "Campanha",
+              "v": 118
+            },
+            {
+              "nm": "Professor",
+              "v": 53
+            },
+            {
+              "nm": "Infraestrutura",
+              "v": 49
+            }
+          ]
+        },
+        {
+          "l": "Neutro",
+          "hex": "#e0a51a",
+          "n": 3102,
+          "motivos": [
+            {
+              "nm": "Engajamento",
+              "v": 882
+            },
+            {
+              "nm": "Spam",
+              "v": 490
+            },
+            {
+              "nm": "Dúvida",
+              "v": 336
+            },
+            {
+              "nm": "Solicitação",
+              "v": 277
+            },
+            {
+              "nm": "Elogio",
+              "v": 60
+            }
+          ],
+          "assuntos": [
+            {
+              "nm": "Valores",
+              "v": 120
+            },
+            {
+              "nm": "Planos",
+              "v": 97
+            },
+            {
+              "nm": "Unidades",
+              "v": 73
+            },
+            {
+              "nm": "Atendimento no privado",
+              "v": 67
+            },
+            {
+              "nm": "Horários",
+              "v": 25
+            }
+          ]
+        },
+        {
+          "l": "Negativo",
+          "hex": "#d1403a",
+          "n": 1011,
+          "motivos": [
+            {
+              "nm": "Crítica",
+              "v": 717
+            },
+            {
+              "nm": "Reclamação",
+              "v": 676
+            },
+            {
+              "nm": "Spam",
+              "v": 650
+            },
+            {
+              "nm": "Engajamento",
+              "v": 162
+            },
+            {
+              "nm": "Tema Sensível",
+              "v": 103
+            }
+          ],
+          "assuntos": [
+            {
+              "nm": "Atendimento",
+              "v": 133
+            },
+            {
+              "nm": "Insatisfação",
+              "v": 86
+            },
+            {
+              "nm": "Preço",
+              "v": 74
+            },
+            {
+              "nm": "Infraestrutura",
+              "v": 57
+            },
+            {
+              "nm": "Cobrança",
+              "v": 22
+            }
+          ]
+        }
+      ],
+      "nota": "Leitura ilustrativa: o positivo é sustentado por marcações e elogios, o neutro por dúvidas práticas e o negativo por críticas pontuais."
+    },
+    "unidades": {
+      "lead": "540 menções (7,7% do mês) foram associadas a alguma unidade específica. A leitura abaixo mostra tendências, e não um ranking completo da rede. Dados fictícios.",
+      "volume": [
+        {
+          "nm": "Unidade Centro",
+          "v": 120,
+          "t": [
+            {
+              "l": "Elogio",
+              "n": 75
+            },
+            {
+              "l": "Engajamento",
+              "n": 44
+            },
+            {
+              "l": "Sem motivo",
+              "n": 1
+            }
+          ]
+        },
+        {
+          "nm": "Unidade Vila Nova",
+          "v": 112,
+          "t": [
+            {
+              "l": "Elogio",
+              "n": 70
+            },
+            {
+              "l": "Engajamento",
+              "n": 41
+            },
+            {
+              "l": "Sem motivo",
+              "n": 1
+            }
+          ]
+        },
+        {
+          "nm": "Unidade Parque Verde",
+          "v": 92,
+          "t": [
+            {
+              "l": "Elogio",
+              "n": 58
+            },
+            {
+              "l": "Engajamento",
+              "n": 33
+            },
+            {
+              "l": "Sem motivo",
+              "n": 1
+            }
+          ]
+        },
+        {
+          "nm": "Unidade Praia Azul",
+          "v": 63,
+          "t": [
+            {
+              "l": "Elogio",
+              "n": 40
+            },
+            {
+              "l": "Engajamento",
+              "n": 22
+            },
+            {
+              "l": "Sem motivo",
+              "n": 1
+            }
+          ]
+        },
+        {
+          "nm": "Unidade Alto da Serra",
+          "v": 56,
+          "t": [
+            {
+              "l": "Elogio",
+              "n": 35
+            },
+            {
+              "l": "Engajamento",
+              "n": 20
+            },
+            {
+              "l": "Sem motivo",
+              "n": 1
+            }
+          ]
+        },
+        {
+          "nm": "Unidade Boa Vista",
+          "v": 51,
+          "t": [
+            {
+              "l": "Elogio",
+              "n": 32
+            },
+            {
+              "l": "Engajamento",
+              "n": 18
+            },
+            {
+              "l": "Sem motivo",
+              "n": 1
+            }
+          ]
+        },
+        {
+          "nm": "Unidade Lago Sul",
+          "v": 23,
+          "t": [
+            {
+              "l": "Elogio",
+              "n": 15
+            },
+            {
+              "l": "Engajamento",
+              "n": 7
+            },
+            {
+              "l": "Sem motivo",
+              "n": 1
+            }
+          ]
+        },
+        {
+          "nm": "Unidade Santa Clara",
+          "v": 23,
+          "t": [
+            {
+              "l": "Elogio",
+              "n": 15
+            },
+            {
+              "l": "Engajamento",
+              "n": 7
+            },
+            {
+              "l": "Sem motivo",
+              "n": 1
+            }
+          ]
+        }
+      ],
+      "elogios": [
+        {
+          "l": "Unidade Centro",
+          "n": 4
+        },
+        {
+          "l": "Unidade Vila Nova",
+          "n": 8
+        },
+        {
+          "l": "Unidade Parque Verde",
+          "n": 20
+        },
+        {
+          "l": "Unidade Praia Azul",
+          "n": 22
+        },
+        {
+          "l": "Unidade Alto da Serra",
+          "n": 9
+        },
+        {
+          "l": "Unidade Boa Vista",
+          "n": 2
+        }
+      ],
+      "criticas": [
+        {
+          "l": "Unidade Parque Verde",
+          "n": 13
+        },
+        {
+          "l": "Unidade Praia Azul",
+          "n": 13
+        },
+        {
+          "l": "Unidade Alto da Serra",
+          "n": 16
+        },
+        {
+          "l": "Unidade Boa Vista",
+          "n": 6
+        },
+        {
+          "l": "Unidade Lago Sul",
+          "n": 20
+        },
+        {
+          "l": "Unidade Santa Clara",
+          "n": 17
+        }
+      ],
+      "assuntos": [
+        {
+          "l": "Unidade Centro",
+          "n": 120
+        },
+        {
+          "l": "Unidade Vila Nova",
+          "n": 112
+        },
+        {
+          "l": "Unidade Parque Verde",
+          "n": 92
+        },
+        {
+          "l": "Unidade Praia Azul",
+          "n": 63
+        },
+        {
+          "l": "Unidade Alto da Serra",
+          "n": 56
+        },
+        {
+          "l": "Unidade Boa Vista",
+          "n": 51
+        }
+      ],
+      "destaques": [
+        {
+          "nm": "Unidade Centro",
+          "n": 120,
+          "pos": 72,
+          "neu": 36,
+          "neg": 12,
+          "txt": "Texto de exemplo descrevendo a leitura da unidade com números fictícios."
+        },
+        {
+          "nm": "Unidade Vila Nova",
+          "n": 112,
+          "pos": 67,
+          "neu": 33,
+          "neg": 12,
+          "txt": "Texto de exemplo descrevendo a leitura da unidade com números fictícios."
+        },
+        {
+          "nm": "Unidade Parque Verde",
+          "n": 92,
+          "pos": 55,
+          "neu": 27,
+          "neg": 10,
+          "txt": "Texto de exemplo descrevendo a leitura da unidade com números fictícios."
+        },
+        {
+          "nm": "Unidade Praia Azul",
+          "n": 63,
+          "pos": 37,
+          "neu": 18,
+          "neg": 8,
+          "txt": "Texto de exemplo descrevendo a leitura da unidade com números fictícios."
+        }
+      ],
+      "nota": "Entre as menções com unidade identificada, a parte negativa é pequena (valores fictícios para ilustrar o layout)."
+    },
+    "posts": [
+      {
+        "tipo": "Publicação patrocinada · Instagram",
+        "texto": "Dica de treino em vídeo curto, com texto de exemplo.",
+        "curtidas": "36.274",
+        "comentarios": "113",
+        "link": "https://example.com/post-demo-1",
+        "formato": "Feed"
+      },
+      {
+        "tipo": "Reels · Instagram",
+        "texto": "Bastidores de uma aula coletiva, com texto de exemplo.",
+        "curtidas": "1.355",
+        "comentarios": "150",
+        "link": "https://example.com/post-demo-2",
+        "formato": "Reels"
+      },
+      {
+        "tipo": "Reels · Instagram",
+        "texto": "Anúncio de uma nova unidade, com texto de exemplo.",
+        "curtidas": "695",
+        "comentarios": "16",
+        "link": "https://example.com/post-demo-3",
+        "formato": "Reels"
+      }
+    ],
+    "postsParc": [
+      {
+        "tipo": "Publicidade (#publi) · Reels",
+        "texto": "Influenciador apresenta a estrutura de uma unidade (texto de exemplo).",
+        "curtidas": "457",
+        "comentarios": "59",
+        "link": "https://example.com/post-demo-4",
+        "autor": "@perfil_exemplo_a"
+      },
+      {
+        "tipo": "Parceria comercial · Reels",
+        "texto": "Desconto em um parceiro para quem treina (texto de exemplo).",
+        "curtidas": "266",
+        "comentarios": "72",
+        "link": "https://example.com/post-demo-5",
+        "autor": "@perfil_exemplo_b"
+      },
+      {
+        "tipo": "Contrato de influenciador · Publicação",
+        "texto": "Anúncio de parceria com influenciador (texto de exemplo).",
+        "curtidas": "158",
+        "comentarios": "17",
+        "link": "https://example.com/post-demo-6",
+        "autor": "@perfil_exemplo_c"
+      }
+    ],
+    "postsOrg": [
+      {
+        "tipo": "Reels · Instagram",
+        "texto": "Vídeo de humor sobre a rotina de treino (texto de exemplo).",
+        "curtidas": "3.554",
+        "comentarios": "120",
+        "link": "https://example.com/post-demo-7",
+        "autor": "@perfil_exemplo_d"
+      },
+      {
+        "tipo": "Reels · Instagram",
+        "texto": "Relato pessoal de quem voltou a treinar (texto de exemplo).",
+        "curtidas": "1.557",
+        "comentarios": "110",
+        "link": "https://example.com/post-demo-8",
+        "autor": "@perfil_exemplo_e"
+      },
+      {
+        "tipo": "Reels · Instagram",
+        "texto": "Review de uma unidade recém-inaugurada (texto de exemplo).",
+        "curtidas": "867",
+        "comentarios": "17",
+        "link": "https://example.com/post-demo-9",
+        "autor": "@perfil_exemplo_f"
+      }
+    ],
+    "insights": [
+      {
+        "label": "Insight principal",
+        "title": "Título de exemplo: um pico concentrou 25,7% das menções do mês",
+        "text": "Texto ilustrativo. Em março, os dias 18 a 20/03 somaram 1.795 menções, 25,7% das 6.987 do mês. Fora do pico, o ritmo foi de 185 menções por dia. Todos os números são inventados para demonstrar o layout.",
+        "links": []
+      },
+      {
+        "label": "Insight",
+        "title": "Título de exemplo sobre conteúdo",
+        "text": "Texto ilustrativo de um segundo insight, onde a equipe descreve um padrão observado e uma oportunidade. Nenhum dado real.",
+        "links": []
+      },
+      {
+        "label": "Insight",
+        "title": "Título de exemplo sobre dúvidas do público",
+        "text": "Texto ilustrativo de um terceiro insight, sobre os temas que mais geram dúvidas. Nenhum dado real.",
+        "links": []
+      }
+    ],
+    "recos": [
+      {
+        "g": "Pontos de atenção",
+        "t": "Recomendação de exemplo 1",
+        "d": "Descrição de exemplo da primeira recomendação, sem dados reais."
+      },
+      {
+        "g": "Pontos de atenção",
+        "t": "Recomendação de exemplo 2",
+        "d": "Descrição de exemplo da segunda recomendação."
+      },
+      {
+        "g": "Oportunidades de conteúdo",
+        "t": "Recomendação de exemplo 3",
+        "d": "Descrição de exemplo da terceira recomendação."
+      }
+    ]
+    ,"secPico": {
+      label: 'O pico do mês',
+      title: 'O pico do mês',
+      html: ()=>`<p class="lead">Fora do pico, o volume diário ficou entre 113 e 260 menções. Nos dias 18 a 20/03, uma campanha de verão com influenciador (fictícia) elevou a conversa: 1.795 menções, 25,7% do mês.</p>
+          <div class="chart-panel">
+            <p class="chart-title">Cinco dias com mais menções</p>
+            <p class="chart-sub">Instagram, Facebook e TikTok somados</p>
+            ${hbarList([{nm:'19/03 (quarta)',v:928},{nm:'20/03 (quinta)',v:495},{nm:'18/03 (terça)',v:372},{nm:'06/03 (quinta)',v:260},{nm:'02/03 (domingo)',v:253}], {labelWidth:150, valWidth:50})}
+          </div>
+          <div class="grid g-4" style="margin-top:16px">
+            <div class="card kpi"><div class="label">Indicador A</div><div class="value">697</div><div class="foot">texto de apoio fictício</div></div>
+            <div class="card kpi"><div class="label">Indicador B</div><div class="value">347</div><div class="foot">texto de apoio fictício</div></div>
+            <div class="card kpi"><div class="label">Indicador C</div><div class="value">204</div><div class="foot">texto de apoio fictício</div></div>
+            <div class="card kpi"><div class="label">Indicador D</div><div class="value">40</div><div class="foot">texto de apoio fictício</div></div>
+          </div>`
+    }
+  },
+  '2025-04': {
+    "hero": {
+      "eyebrow": "● Relatório mensal · abril 2025 · dados fictícios",
+      "h1": "Um <em>pico de conversa</em> marcou abril: o dia 22/04 teve 867 menções",
+      "dek": "Em abril, a marca somou 6.268 menções no Instagram, Facebook e TikTok. Fora do pico, o volume ficou entre 113 e 260 menções por dia. Este relatório é uma versão demonstrativa: todos os números, nomes e posts são inventados."
+    },
+    "diasLabel": "01 a 30 de abril",
+    "outBar": {
+      "title": "Excluir o pico de abril (22 a 23/04)",
+      "desc": "Substitui os dias 22 a 23/04 pela média dos demais dias do mês (174 menções/dia), para ver o ritmo habitual da marca",
+      "hover": "O filtro recalcula o total de menções, o volume diário, o volume por dia da semana e a saudabilidade. Os demais recortes continuam mostrando o mês completo."
+    },
+    "outShort": "sem o pico",
+    "outNote": "O filtro recalcula menções, volume diário e volume por dia da semana. Os demais recortes seguem mostrando o mês completo.",
+    "txt": {
+      "vol": "O gráfico mostra o volume de menções dia a dia em abril. Fora do pico, o volume ficou entre 113 e 260 por dia. Toque nas barras para ver o valor exato de cada dia.",
+      "volEx": "O gráfico mostra a evolução diária com os dias 22 a 23/04 substituídos pela média dos demais (174 por dia).",
+      "sem": "Este gráfico soma as menções de cada dia do mês por dia da semana. Toque nas barras para ver o valor exato.",
+      "semEx": "Este gráfico soma as menções por dia da semana, com os dias do pico substituídos pela média dos demais dias do mês.",
+      "semSub": "Soma de todas as ocorrências de cada dia da semana no mês, incluindo o pico",
+      "semSubEx": "Soma de todas as ocorrências de cada dia da semana no mês, com o pico substituído pela média",
+      "sent": "Neutro lidera (45,9%), seguido de positivo (37,8%) e negativo (16,3%). A saudabilidade, que mede a fatia de menções positivas ou neutras, é de 81,0%.",
+      "genero": "Em dados reais, a maioria dos perfis não expõe gênero publicamente. Os números aqui são fictícios.",
+      "termos": "Os termos mais citados do mês aparecem em tamanho proporcional à frequência (exemplo ilustrativo).",
+      "posts": ""
+    },
+    "mencoes": 6268,
+    "mencoesSentClassificadas": 6069,
+    "sentimento": {
+      "pos": 37.78,
+      "neu": 45.91,
+      "neg": 16.31,
+      "posN": 2293,
+      "neuN": 2786,
+      "negN": 990
+    },
+    "internoExterno": {
+      "total": {
+        "proprio": 2857,
+        "externo": 3411
+      },
+      "pos": {
+        "proprio": 1030,
+        "externo": 1263
+      },
+      "neu": {
+        "proprio": 1461,
+        "externo": 1325
+      },
+      "neg": {
+        "proprio": 423,
+        "externo": 567
+      }
+    },
+    "semana": [
+      {
+        "nm": "Dom",
+        "v": 656
+      },
+      {
+        "nm": "Seg",
+        "v": 786
+      },
+      {
+        "nm": "Ter",
+        "v": 1682
+      },
+      {
+        "nm": "Qua",
+        "v": 1072
+      },
+      {
+        "nm": "Qui",
+        "v": 611
+      },
+      {
+        "nm": "Sex",
+        "v": 621
+      },
+      {
+        "nm": "Sáb",
+        "v": 840
+      }
+    ],
+    "diario": [
+      184,
+      131,
+      114,
+      188,
+      218,
+      207,
+      245,
+      201,
+      143,
+      159,
+      178,
+      223,
+      113,
+      166,
+      226,
+      116,
+      137,
+      131,
+      237,
+      217,
+      115,
+      867,
+      528,
+      201,
+      124,
+      162,
+      119,
+      260,
+      204,
+      154
+    ],
+    "semOutlier": {
+      "mencoes": 5221,
+      "saudFixed": 81.0,
+      "semana": [
+        {
+          "nm": "Dom",
+          "v": 656
+        },
+        {
+          "nm": "Seg",
+          "v": 786
+        },
+        {
+          "nm": "Ter",
+          "v": 989
+        },
+        {
+          "nm": "Qua",
+          "v": 718
+        },
+        {
+          "nm": "Qui",
+          "v": 611
+        },
+        {
+          "nm": "Sex",
+          "v": 621
+        },
+        {
+          "nm": "Sáb",
+          "v": 840
+        }
+      ],
+      "diario": [
+        184,
+        131,
+        114,
+        188,
+        218,
+        207,
+        245,
+        201,
+        143,
+        159,
+        178,
+        223,
+        113,
+        166,
+        226,
+        116,
+        137,
+        131,
+        237,
+        217,
+        115,
+        174,
+        174,
+        201,
+        124,
+        162,
+        119,
+        260,
+        204,
+        154
+      ]
+    },
+    "redes": [
+      {
+        "l": "Instagram",
+        "v": 5854,
+        "pct": 93.4,
+        "hex": "#0096fa"
+      },
+      {
+        "l": "TikTok",
+        "v": 256,
+        "pct": 4.1,
+        "hex": "#f76556"
+      },
+      {
+        "l": "Facebook",
+        "v": 158,
+        "pct": 2.5,
+        "hex": "#050d9e"
+      }
+    ],
+    "genero": [
+      {
+        "l": "Desconhecido",
+        "v": 69.4,
+        "n": 4349,
+        "hex": "#c7cce8"
+      },
+      {
+        "l": "Feminino",
+        "v": 15.3,
+        "n": 959,
+        "hex": "#f76556"
+      },
+      {
+        "l": "Masculino",
+        "v": 15.3,
+        "n": 959,
+        "hex": "#0096fa"
+      }
+    ],
+    "topUsuarios": [
+      {
+        "nm": "Perfil Exemplo 01",
+        "v": 140
+      },
+      {
+        "nm": "Perfil Exemplo 02",
+        "v": 114
+      },
+      {
+        "nm": "Perfil Exemplo 03",
+        "v": 103
+      },
+      {
+        "nm": "Perfil Exemplo 04",
+        "v": 103
+      },
+      {
+        "nm": "Perfil Exemplo 05",
+        "v": 77
+      },
+      {
+        "nm": "Perfil Exemplo 06",
+        "v": 70
+      },
+      {
+        "nm": "Perfil Exemplo 07",
+        "v": 66
+      },
+      {
+        "nm": "Perfil Exemplo 08",
+        "v": 40
+      }
+    ],
+    "hashtagsConsumidor": [
+      {
+        "nm": "#Treino",
+        "v": 148
+      },
+      {
+        "nm": "#Saude",
+        "v": 146
+      },
+      {
+        "nm": "#Academia",
+        "v": 139
+      },
+      {
+        "nm": "#Musculacao",
+        "v": 107
+      },
+      {
+        "nm": "#Bemestar",
+        "v": 71
+      },
+      {
+        "nm": "#Verao",
+        "v": 70
+      },
+      {
+        "nm": "#Fitness",
+        "v": 70
+      },
+      {
+        "nm": "#MarcaExemplo",
+        "v": 66
+      }
+    ],
+    "emojis": [
+      {
+        "em": "❤️",
+        "l": "Coração",
+        "v": 262
+      },
+      {
+        "em": "💪",
+        "l": "Braço forte",
+        "v": 239
+      },
+      {
+        "em": "🔥",
+        "l": "Fogo",
+        "v": 223
+      },
+      {
+        "em": "👏",
+        "l": "Palmas",
+        "v": 140
+      },
+      {
+        "em": "😂",
+        "l": "Chorando de rir",
+        "v": 119
+      }
+    ],
+    "assuntos": [
+      {
+        "nm": "Academia",
+        "v": 129
+      },
+      {
+        "nm": "Treino",
+        "v": 104
+      },
+      {
+        "nm": "Verão",
+        "v": 91
+      },
+      {
+        "nm": "Promoção",
+        "v": 90
+      },
+      {
+        "nm": "Unidade Centro",
+        "v": 47
+      },
+      {
+        "nm": "Aula coletiva",
+        "v": 45
+      },
+      {
+        "nm": "Plano",
+        "v": 41
+      },
+      {
+        "nm": "Professor",
+        "v": 29
+      }
+    ],
+    "assuntosNota": "Texto de exemplo comentando os assuntos mais citados do mês (dados fictícios).",
+    "usuarioTags": [
+      {
+        "l": "Cliente",
+        "n": 641,
+        "pct": 60.2,
+        "hex": "#050d9e"
+      },
+      {
+        "l": "Não cliente",
+        "n": 255,
+        "pct": 23.9,
+        "hex": "#c7cce8"
+      },
+      {
+        "l": "Colaboradores",
+        "n": 85,
+        "pct": 8.0,
+        "hex": "#f76556"
+      },
+      {
+        "l": "Parceiros",
+        "n": 53,
+        "pct": 5.0,
+        "hex": "#e0a51a"
+      },
+      {
+        "l": "Influenciadores",
+        "n": 31,
+        "pct": 2.9,
+        "hex": "#0096fa"
+      }
+    ],
+    "categorizacao": [
+      {
+        "l": "Engajamento",
+        "n": 2120,
+        "pct": 33.8,
+        "hex": "#37c8f0"
+      },
+      {
+        "l": "Elogio",
+        "n": 897,
+        "pct": 14.3,
+        "hex": "#0f8f5f"
+      },
+      {
+        "l": "Dúvida",
+        "n": 705,
+        "pct": 11.2,
+        "hex": "#0096fa"
+      },
+      {
+        "l": "Spam",
+        "n": 577,
+        "pct": 9.2,
+        "hex": "#a7abc9"
+      },
+      {
+        "l": "Tema Sensível",
+        "n": 384,
+        "pct": 6.1,
+        "hex": "#02053b"
+      },
+      {
+        "l": "Crítica",
+        "n": 320,
+        "pct": 5.1,
+        "hex": "#d1403a"
+      },
+      {
+        "l": "Reclamação",
+        "n": 256,
+        "pct": 4.1,
+        "hex": "#f76556"
+      },
+      {
+        "l": "Solicitação",
+        "n": 192,
+        "pct": 3.1,
+        "hex": "#050d9e"
+      },
+      {
+        "l": "Sugestão",
+        "n": 64,
+        "pct": 1.0,
+        "hex": "#e0a51a"
+      }
+    ],
+    "categorizacaoDetalhe": {
+      "Tema Sensível": [
+        {
+          "l": "Assunto A",
+          "n": 77
+        },
+        {
+          "l": "Assunto B",
+          "n": 55
+        },
+        {
+          "l": "Assunto C",
+          "n": 44
+        }
+      ],
+      "Elogio": [
+        {
+          "l": "Influenciador",
+          "n": 107
+        },
+        {
+          "l": "Marca",
+          "n": 78
+        },
+        {
+          "l": "Campanha",
+          "n": 66
+        },
+        {
+          "l": "Professor",
+          "n": 47
+        },
+        {
+          "l": "Infraestrutura",
+          "n": 35
+        }
+      ],
+      "Crítica": [
+        {
+          "l": "Atendimento",
+          "n": 87
+        },
+        {
+          "l": "Marca",
+          "n": 41
+        },
+        {
+          "l": "Infraestrutura",
+          "n": 27
+        },
+        {
+          "l": "Preço",
+          "n": 21
+        }
+      ],
+      "Dúvida": [
+        {
+          "l": "Valores",
+          "n": 109
+        },
+        {
+          "l": "Planos",
+          "n": 108
+        },
+        {
+          "l": "Unidades",
+          "n": 98
+        },
+        {
+          "l": "Horários",
+          "n": 23
+        }
+      ],
+      "Sugestão": [
+        {
+          "l": "Parceria",
+          "n": 114
+        },
+        {
+          "l": "Ampliação",
+          "n": 71
+        },
+        {
+          "l": "Aplicativo",
+          "n": 38
+        }
+      ],
+      "Reclamação": [
+        {
+          "l": "Insatisfação",
+          "n": 103
+        },
+        {
+          "l": "Atendimento da unidade",
+          "n": 77
+        },
+        {
+          "l": "Cobrança",
+          "n": 50
+        },
+        {
+          "l": "Infraestrutura",
+          "n": 26
+        }
+      ],
+      "Engajamento": [
+        {
+          "l": "Marcação em foto",
+          "n": 83
+        },
+        {
+          "l": "Menção em comentário",
+          "n": 57
+        },
+        {
+          "l": "Emoji",
+          "n": 29
+        },
+        {
+          "l": "Saudação",
+          "n": 20
+        }
+      ],
+      "Solicitação": [
+        {
+          "l": "Atendimento no privado",
+          "n": 65
+        },
+        {
+          "l": "Parceria",
+          "n": 12
+        }
+      ],
+      "Spam": [
+        {
+          "l": "Mensagem não relacionada",
+          "n": 88
+        },
+        {
+          "l": "Divulgação",
+          "n": 61
+        },
+        {
+          "l": "Links",
+          "n": 15
+        }
+      ]
+    },
+    "sentTemas": {
+      "lead": "Para entender o que sustenta cada sentimento, cruzamos o sentimento de cada menção com as tags de motivo e de assunto aplicadas a ela. Todos os números deste exemplo são fictícios.",
+      "cols": [
+        {
+          "l": "Positivo",
+          "hex": "#0f8f5f",
+          "n": 2293,
+          "motivos": [
+            {
+              "nm": "Engajamento",
+              "v": 888
+            },
+            {
+              "nm": "Elogio",
+              "v": 462
+            },
+            {
+              "nm": "Dúvida",
+              "v": 291
+            },
+            {
+              "nm": "Spam",
+              "v": 226
+            },
+            {
+              "nm": "Solicitação",
+              "v": 83
+            }
+          ],
+          "assuntos": [
+            {
+              "nm": "Influenciador",
+              "v": 157
+            },
+            {
+              "nm": "Marca",
+              "v": 133
+            },
+            {
+              "nm": "Campanha",
+              "v": 76
+            },
+            {
+              "nm": "Professor",
+              "v": 34
+            },
+            {
+              "nm": "Infraestrutura",
+              "v": 23
+            }
+          ]
+        },
+        {
+          "l": "Neutro",
+          "hex": "#e0a51a",
+          "n": 2786,
+          "motivos": [
+            {
+              "nm": "Engajamento",
+              "v": 867
+            },
+            {
+              "nm": "Spam",
+              "v": 826
+            },
+            {
+              "nm": "Dúvida",
+              "v": 414
+            },
+            {
+              "nm": "Solicitação",
+              "v": 155
+            },
+            {
+              "nm": "Elogio",
+              "v": 76
+            }
+          ],
+          "assuntos": [
+            {
+              "nm": "Valores",
+              "v": 145
+            },
+            {
+              "nm": "Planos",
+              "v": 116
+            },
+            {
+              "nm": "Unidades",
+              "v": 69
+            },
+            {
+              "nm": "Atendimento no privado",
+              "v": 39
+            },
+            {
+              "nm": "Horários",
+              "v": 29
+            }
+          ]
+        },
+        {
+          "l": "Negativo",
+          "hex": "#d1403a",
+          "n": 990,
+          "motivos": [
+            {
+              "nm": "Crítica",
+              "v": 833
+            },
+            {
+              "nm": "Reclamação",
+              "v": 621
+            },
+            {
+              "nm": "Spam",
+              "v": 537
+            },
+            {
+              "nm": "Engajamento",
+              "v": 330
+            },
+            {
+              "nm": "Tema Sensível",
+              "v": 261
+            }
+          ],
+          "assuntos": [
+            {
+              "nm": "Atendimento",
+              "v": 137
+            },
+            {
+              "nm": "Insatisfação",
+              "v": 95
+            },
+            {
+              "nm": "Preço",
+              "v": 75
+            },
+            {
+              "nm": "Infraestrutura",
+              "v": 46
+            },
+            {
+              "nm": "Cobrança",
+              "v": 43
+            }
+          ]
+        }
+      ],
+      "nota": "Leitura ilustrativa: o positivo é sustentado por marcações e elogios, o neutro por dúvidas práticas e o negativo por críticas pontuais."
+    },
+    "unidades": {
+      "lead": "686 menções (10,9% do mês) foram associadas a alguma unidade específica. A leitura abaixo mostra tendências, e não um ranking completo da rede. Dados fictícios.",
+      "volume": [
+        {
+          "nm": "Unidade Centro",
+          "v": 118,
+          "t": [
+            {
+              "l": "Elogio",
+              "n": 74
+            },
+            {
+              "l": "Engajamento",
+              "n": 43
+            },
+            {
+              "l": "Sem motivo",
+              "n": 1
+            }
+          ]
+        },
+        {
+          "nm": "Unidade Vila Nova",
+          "v": 102,
+          "t": [
+            {
+              "l": "Elogio",
+              "n": 64
+            },
+            {
+              "l": "Engajamento",
+              "n": 37
+            },
+            {
+              "l": "Sem motivo",
+              "n": 1
+            }
+          ]
+        },
+        {
+          "nm": "Unidade Parque Verde",
+          "v": 97,
+          "t": [
+            {
+              "l": "Elogio",
+              "n": 61
+            },
+            {
+              "l": "Engajamento",
+              "n": 35
+            },
+            {
+              "l": "Sem motivo",
+              "n": 1
+            }
+          ]
+        },
+        {
+          "nm": "Unidade Praia Azul",
+          "v": 85,
+          "t": [
+            {
+              "l": "Elogio",
+              "n": 54
+            },
+            {
+              "l": "Engajamento",
+              "n": 30
+            },
+            {
+              "l": "Sem motivo",
+              "n": 1
+            }
+          ]
+        },
+        {
+          "nm": "Unidade Alto da Serra",
+          "v": 85,
+          "t": [
+            {
+              "l": "Elogio",
+              "n": 54
+            },
+            {
+              "l": "Engajamento",
+              "n": 30
+            },
+            {
+              "l": "Sem motivo",
+              "n": 1
+            }
+          ]
+        },
+        {
+          "nm": "Unidade Boa Vista",
+          "v": 83,
+          "t": [
+            {
+              "l": "Elogio",
+              "n": 52
+            },
+            {
+              "l": "Engajamento",
+              "n": 30
+            },
+            {
+              "l": "Sem motivo",
+              "n": 1
+            }
+          ]
+        },
+        {
+          "nm": "Unidade Lago Sul",
+          "v": 81,
+          "t": [
+            {
+              "l": "Elogio",
+              "n": 51
+            },
+            {
+              "l": "Engajamento",
+              "n": 29
+            },
+            {
+              "l": "Sem motivo",
+              "n": 1
+            }
+          ]
+        },
+        {
+          "nm": "Unidade Santa Clara",
+          "v": 35,
+          "t": [
+            {
+              "l": "Elogio",
+              "n": 22
+            },
+            {
+              "l": "Engajamento",
+              "n": 12
+            },
+            {
+              "l": "Sem motivo",
+              "n": 1
+            }
+          ]
+        }
+      ],
+      "elogios": [
+        {
+          "l": "Unidade Centro",
+          "n": 9
+        },
+        {
+          "l": "Unidade Vila Nova",
+          "n": 10
+        },
+        {
+          "l": "Unidade Parque Verde",
+          "n": 5
+        },
+        {
+          "l": "Unidade Praia Azul",
+          "n": 15
+        },
+        {
+          "l": "Unidade Alto da Serra",
+          "n": 7
+        },
+        {
+          "l": "Unidade Boa Vista",
+          "n": 30
+        }
+      ],
+      "criticas": [
+        {
+          "l": "Unidade Parque Verde",
+          "n": 2
+        },
+        {
+          "l": "Unidade Praia Azul",
+          "n": 16
+        },
+        {
+          "l": "Unidade Alto da Serra",
+          "n": 12
+        },
+        {
+          "l": "Unidade Boa Vista",
+          "n": 15
+        },
+        {
+          "l": "Unidade Lago Sul",
+          "n": 7
+        },
+        {
+          "l": "Unidade Santa Clara",
+          "n": 15
+        }
+      ],
+      "assuntos": [
+        {
+          "l": "Unidade Centro",
+          "n": 118
+        },
+        {
+          "l": "Unidade Vila Nova",
+          "n": 102
+        },
+        {
+          "l": "Unidade Parque Verde",
+          "n": 97
+        },
+        {
+          "l": "Unidade Praia Azul",
+          "n": 85
+        },
+        {
+          "l": "Unidade Alto da Serra",
+          "n": 85
+        },
+        {
+          "l": "Unidade Boa Vista",
+          "n": 83
+        }
+      ],
+      "destaques": [
+        {
+          "nm": "Unidade Centro",
+          "n": 118,
+          "pos": 70,
+          "neu": 35,
+          "neg": 13,
+          "txt": "Texto de exemplo descrevendo a leitura da unidade com números fictícios."
+        },
+        {
+          "nm": "Unidade Vila Nova",
+          "n": 102,
+          "pos": 61,
+          "neu": 30,
+          "neg": 11,
+          "txt": "Texto de exemplo descrevendo a leitura da unidade com números fictícios."
+        },
+        {
+          "nm": "Unidade Parque Verde",
+          "n": 97,
+          "pos": 58,
+          "neu": 29,
+          "neg": 10,
+          "txt": "Texto de exemplo descrevendo a leitura da unidade com números fictícios."
+        },
+        {
+          "nm": "Unidade Praia Azul",
+          "n": 85,
+          "pos": 51,
+          "neu": 25,
+          "neg": 9,
+          "txt": "Texto de exemplo descrevendo a leitura da unidade com números fictícios."
+        }
+      ],
+      "nota": "Entre as menções com unidade identificada, a parte negativa é pequena (valores fictícios para ilustrar o layout)."
+    },
+    "posts": [
+      {
+        "tipo": "Publicação patrocinada · Instagram",
+        "texto": "Dica de treino em vídeo curto, com texto de exemplo.",
+        "curtidas": "11.279",
+        "comentarios": "70",
+        "link": "https://example.com/post-demo-1",
+        "formato": "Feed"
+      },
+      {
+        "tipo": "Reels · Instagram",
+        "texto": "Bastidores de uma aula coletiva, com texto de exemplo.",
+        "curtidas": "2.009",
+        "comentarios": "94",
+        "link": "https://example.com/post-demo-2",
+        "formato": "Reels"
+      },
+      {
+        "tipo": "Reels · Instagram",
+        "texto": "Anúncio de uma nova unidade, com texto de exemplo.",
+        "curtidas": "719",
+        "comentarios": "24",
+        "link": "https://example.com/post-demo-3",
+        "formato": "Reels"
+      }
+    ],
+    "postsParc": [
+      {
+        "tipo": "Publicidade (#publi) · Reels",
+        "texto": "Influenciador apresenta a estrutura de uma unidade (texto de exemplo).",
+        "curtidas": "870",
+        "comentarios": "90",
+        "link": "https://example.com/post-demo-4",
+        "autor": "@perfil_exemplo_a"
+      },
+      {
+        "tipo": "Parceria comercial · Reels",
+        "texto": "Desconto em um parceiro para quem treina (texto de exemplo).",
+        "curtidas": "176",
+        "comentarios": "72",
+        "link": "https://example.com/post-demo-5",
+        "autor": "@perfil_exemplo_b"
+      },
+      {
+        "tipo": "Contrato de influenciador · Publicação",
+        "texto": "Anúncio de parceria com influenciador (texto de exemplo).",
+        "curtidas": "116",
+        "comentarios": "13",
+        "link": "https://example.com/post-demo-6",
+        "autor": "@perfil_exemplo_c"
+      }
+    ],
+    "postsOrg": [
+      {
+        "tipo": "Reels · Instagram",
+        "texto": "Vídeo de humor sobre a rotina de treino (texto de exemplo).",
+        "curtidas": "2.207",
+        "comentarios": "241",
+        "link": "https://example.com/post-demo-7",
+        "autor": "@perfil_exemplo_d"
+      },
+      {
+        "tipo": "Reels · Instagram",
+        "texto": "Relato pessoal de quem voltou a treinar (texto de exemplo).",
+        "curtidas": "942",
+        "comentarios": "72",
+        "link": "https://example.com/post-demo-8",
+        "autor": "@perfil_exemplo_e"
+      },
+      {
+        "tipo": "Reels · Instagram",
+        "texto": "Review de uma unidade recém-inaugurada (texto de exemplo).",
+        "curtidas": "872",
+        "comentarios": "51",
+        "link": "https://example.com/post-demo-9",
+        "autor": "@perfil_exemplo_f"
+      }
+    ],
+    "insights": [
+      {
+        "label": "Insight principal",
+        "title": "Título de exemplo: um pico concentrou 22,3% das menções do mês",
+        "text": "Texto ilustrativo. Em abril, os dias 22 a 23/04 somaram 1.395 menções, 22,3% das 6.268 do mês. Fora do pico, o ritmo foi de 174 menções por dia. Todos os números são inventados para demonstrar o layout.",
+        "links": []
+      },
+      {
+        "label": "Insight",
+        "title": "Título de exemplo sobre conteúdo",
+        "text": "Texto ilustrativo de um segundo insight, onde a equipe descreve um padrão observado e uma oportunidade. Nenhum dado real.",
+        "links": []
+      },
+      {
+        "label": "Insight",
+        "title": "Título de exemplo sobre dúvidas do público",
+        "text": "Texto ilustrativo de um terceiro insight, sobre os temas que mais geram dúvidas. Nenhum dado real.",
+        "links": []
+      }
+    ]
+    ,"secPico": {
+      label: 'O pico do mês',
+      title: 'O pico do mês',
+      html: ()=>`<p class="lead">Fora do pico, o volume diário ficou entre 113 e 260 menções. Nos dias 22 a 23/04, uma campanha de verão com influenciador (fictícia) elevou a conversa: 1.395 menções, 22,3% do mês.</p>
+          <div class="chart-panel">
+            <p class="chart-title">Cinco dias com mais menções</p>
+            <p class="chart-sub">Instagram, Facebook e TikTok somados</p>
+            ${hbarList([{nm:'22/04 (terça)',v:867},{nm:'23/04 (quarta)',v:528},{nm:'28/04 (segunda)',v:260},{nm:'07/04 (segunda)',v:245},{nm:'19/04 (sábado)',v:237}], {labelWidth:150, valWidth:50})}
+          </div>
+          <div class="grid g-4" style="margin-top:16px">
+            <div class="card kpi"><div class="label">Indicador A</div><div class="value">740</div><div class="foot">texto de apoio fictício</div></div>
+            <div class="card kpi"><div class="label">Indicador B</div><div class="value">227</div><div class="foot">texto de apoio fictício</div></div>
+            <div class="card kpi"><div class="label">Indicador C</div><div class="value">92</div><div class="foot">texto de apoio fictício</div></div>
+            <div class="card kpi"><div class="label">Indicador D</div><div class="value">189</div><div class="foot">texto de apoio fictício</div></div>
+          </div>`
+    }
+  },
+};
+
+/* ==== auth (gate simples do lado do cliente) ==== */
+const CREDS = { user: 'demo', pass: 'demo', alt: [] };
+function checkAuth(){
+  let ok=false; try{ ok = sessionStorage.getItem('demo_auth')==='1'; }catch(e){}
+  document.getElementById('gate').classList.toggle('hidden', ok);
+}
+document.getElementById('login-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  if(u.toLowerCase()===CREDS.user && (p===CREDS.pass || CREDS.alt.indexOf(p)>=0)){
+    try{ sessionStorage.setItem('demo_auth','1'); }catch(err){}
+    document.getElementById('gate').classList.add('hidden');
+    document.getElementById('login-err').textContent='';
+  } else {
+    document.getElementById('login-err').textContent='Usuário ou senha incorretos.';
+  }
+});
+checkAuth();
+
+/* ==== helpers ==== */
+const $=(s,r=document)=>r.querySelector(s);
+const nf=n=>Number(n).toLocaleString('pt-BR');
+const charts={};
+function killChart(id){ if(charts[id]){ charts[id].destroy(); delete charts[id]; } }
+
+function postCards(list){
+  return list.map((p,i)=>`
+        <a class="card-link" href="${p.link}" target="_blank" rel="noopener">
+          <div class="card spotlight" style="margin-bottom:14px">
+            <div class="badge">0${i+1}</div>
+            <div>
+              <div class="eyebrow-tag" style="margin-bottom:6px">${p.autor?p.autor+' · ':''}${p.tipo}</div>
+              <p style="margin:0;font-weight:500;text-align:justify">${p.texto}</p>
+              <div class="stats">
+                ${p.curtidas?`<div>Curtidas<b>${p.curtidas}</b></div>`:''}
+                ${p.comentarios?`<div>Comentários<b>${p.comentarios}</b></div>`:''}
+                ${p.formato?`<div>Formato<b>${p.formato}</b></div>`:''}
+                ${p.alcance?`<div>Alcance<b>${p.alcance}</b></div>`:''}
+                ${p.destaque?`<div>Efeito no mês<b>${p.destaque}</b></div>`:''}
+              </div>
+              <span class="post-link">Ver publicação original ↗</span>
+            </div>
+          </div>
+        </a>`).join('');
+}
+function ii(text){ return `<span class="info-i">i<span class="tip">${text}</span></span>`; }
+function kpiPop(proprio, externo){
+  const total = proprio + externo;
+  const pP = total ? Math.round(proprio/total*100) : 0;
+  const pE = total ? Math.round(externo/total*100) : 0;
+  return `<div class="subpop"><div class="subpop-title">Interna × externa</div>
+    <div class="subpop-row"><span>Interna</span><b>${nf(proprio)} (${pP}%)</b></div>
+    <div class="subpop-row"><span>Externa</span><b>${nf(externo)} (${pE}%)</b></div>
+  </div>`;
+}
+function sec(num,title,hint){ return `<div class="sec-head"><span class="num">${num}</span><h2>${title}</h2>${hint?`<span class="hint">${hint}</span>`:''}</div>`; }
+const SECTIONS = ['Visão geral', 'Volume diário', 'Evolução e sazonalidade', 'O pico do mês', 'Sentimento', 'Perfil da audiência', 'Vozes e conversas', 'O que as pessoas comentam', 'Usuários', 'Motivos', 'Posts em destaque', 'Insight do mês', 'Para o próximo mês'];
+
+const MONO = "'IBM Plex Mono', ui-monospace, monospace";
+const SANS = "'Montserrat', Arial, sans-serif";
+
+function barChart(id, labels, values, {horizontal=false, colors=null, peakColor='#0096fa', baseColor='#050d9e', dark=false}={}){
+  killChart(id);
+  const max = Math.max(...values);
+  const bg = colors || values.map(v=> v===max ? peakColor : baseColor);
+  const gridColor = dark ? 'rgba(255,255,255,.12)' : '#eceffa';
+  const tickColor = dark ? '#c7ccef' : '#5b607c';
+  charts[id] = new Chart($('#'+id), {
+    type:'bar',
+    data:{ labels, datasets:[{ data: values, backgroundColor:bg, borderRadius:5, maxBarThickness: horizontal?22:34 }] },
+    options:{
+      indexAxis: horizontal ? 'y' : 'x',
+      responsive:true, maintainAspectRatio:false,
+      layout:{ padding:{ top:62, left:8, right:16 } },
+      plugins:{ legend:{display:false}, tooltip:{
+        backgroundColor:'#00082b', titleFont:{family:SANS,weight:'800'}, bodyFont:{family:MONO,size:12},
+        padding:10, cornerRadius:8, displayColors:false,
+        callbacks:{ label: c => nf(c.parsed[horizontal?'x':'y']) + ' menções' }
+      }},
+      scales:{
+        x:{ grid:{ display: horizontal, color:gridColor }, ticks:{ color:tickColor, font:{family:SANS,size:11,weight:'600'} }, max: horizontal ? Math.ceil(max*1.08) : undefined },
+        y:{ beginAtZero:true, grid:{ display: !horizontal, color:gridColor }, ticks:{ color:tickColor, font:{family:SANS,size:11,weight:'600'}, crossAlign: horizontal ? 'near' : 'center' } }
+      }
+    }
+  });
+}
+
+function doughnut(id, labels, values, colorArr, counts){
+  killChart(id);
+  charts[id] = new Chart($('#'+id), {
+    type:'doughnut',
+    data:{ labels, datasets:[{ data: values, backgroundColor: colorArr, borderColor:'#fff', borderWidth:3 }] },
+    options:{
+      responsive:true, maintainAspectRatio:false, cutout:'66%',
+      layout:{ padding:{ top:38, bottom:38, left:34, right:34 } },
+      plugins:{ legend:{display:false}, tooltip:{
+        backgroundColor:'#00082b', titleFont:{family:SANS,weight:'800'}, bodyFont:{family:MONO,size:12},
+        padding:10, cornerRadius:8, displayColors:true,
+        callbacks:{ label: c => ' ' + nf(c.parsed) + '%' + (counts ? ' · ' + nf(counts[c.dataIndex]) + ' menções' : '') }
+      }}
+    }
+  });
+}
+
+function renderTimelineChart(dias){
+  killChart('chartTimeline');
+  const mm = activePeriod.slice(5,7);
+  const labels = dias.map((v,i)=> String(i+1).padStart(2,'0')+'/'+mm);
+  const max = Math.max(...dias);
+  const bg = dias.map(v => v===max ? '#0096fa' : (v>=1000 ? '#37c8f0' : '#c7cce8'));
+  charts.chartTimeline = new Chart($('#chartTimeline'), {
+    type:'bar',
+    data:{ labels, datasets:[{ data: dias, backgroundColor:bg, borderRadius:2, maxBarThickness:20 }] },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      layout:{ padding:{ top:62, left:8, right:8 } },
+      plugins:{ legend:{display:false}, tooltip:{
+        backgroundColor:'#00082b', titleFont:{family:SANS,weight:'800'}, bodyFont:{family:MONO,size:12},
+        padding:10, cornerRadius:8, displayColors:false,
+        callbacks:{ label: c => nf(c.parsed.y) + ' menções' }
+      }},
+      scales:{
+        x:{ grid:{ display:false }, ticks:{ color:'#5b607c', font:{family:SANS,size:10,weight:'600'}, maxRotation:0, autoSkip:true, maxTicksLimit:16 } },
+        y:{ display:false, beginAtZero:true }
+      }
+    }
+  });
+}
+
+function hbarList(items, {labelWidth=128, valWidth=40, color=null, valueFmt=null, popover=null}={}){
+  const max = Math.max(...items.map(i=>i.v));
+  return `<div class="hbar-list">${items.map((u,idx)=>{
+    const sub = popover ? popover(u,idx) : null;
+    const pop = sub && sub.length ? `<div class="subpop" style="left:${labelWidth+10}px"><div class="subpop-title">${u.nm}</div>${sub.map(s=>`<div class="subpop-row"><span>${s.l}</span><b>${nf(s.n)}</b></div>`).join('')}</div>` : '';
+    return `
+    <div class="hbar-row${pop?' has-pop':''}" style="grid-template-columns:${labelWidth}px 1fr ${valWidth}px">
+      <span class="hbar-label" title="${u.nm}">${u.nm}</span>
+      <div class="hbar-track"><div class="hbar-fill" style="width:${(u.v/max*100).toFixed(1)}%;background:${color?color(u,idx):'var(--navy)'}"></div></div>
+      <span class="hbar-val">${valueFmt?valueFmt(u,idx):nf(u.v)}</span>
+      ${pop}
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function topicCard(emoji, title, items){
+  return `<div class="topic-card">
+    <p class="topic-card-title">${emoji} ${title}</p>
+    <ol class="topic-list">${items.map(i=>`<li><span>${i.l}</span><b>${nf(i.n)}</b></li>`).join('')}</ol>
+  </div>`;
+}
+
+function emojiRow(items){
+  return `<div class="emoji-row">${items.map(e=>`
+    <div class="emoji-cell" onclick="this.classList.toggle('tap')">
+      <span class="em">${e.em}</span>
+      <span class="tip">${nf(e.v)} usos</span>
+    </div>`).join('')}</div>`;
+}
+
+function termCloud(items){
+  const max = Math.max(...items.map(i=>i.v));
+  const min = Math.min(...items.map(i=>i.v));
+  return `<div class="cloud">${items.map(i=>{
+    const t = max===min ? 1 : (i.v-min)/(max-min);
+    const size = 13 + t*13;
+    return `<span class="chip" style="font-size:${size.toFixed(0)}px">${i.nm}<span class="badge-n">${nf(i.v)}</span></span>`;
+  }).join('')}</div>`;
+}
+
+function render(){
+  if(!DATA[activePeriod].semOutlier) excludeOutlier=false;
+  let D = DATA[activePeriod];
+  const hasOut = !!D.semOutlier;
+  const T = D.txt || {};
+  if(excludeOutlier && D.semOutlier){ D = Object.assign({}, D, D.semOutlier); }
+  const per = PERIODS.find(p=>p.id===activePeriod);
+  $('#pl-label').textContent = per.label;
+  $('#hero-eyebrow').textContent = D.hero.eyebrow;
+  $('#hero-h1').innerHTML = D.hero.h1;
+  $('#hero-dek').textContent = D.hero.dek;
+  let sn=0;
+  const secs = SECTIONS.slice(); if(D.secPico) secs[3]=D.secPico.label;
+  if(D.unidades) secs.splice(10,0,'Unidades');
+  if(D.sentTemas) secs.splice(5,0,'Temas por sentimento');
+  if(!(D.posts&&D.posts.length)) secs.splice(secs.indexOf('Posts em destaque'),1);
+  if(!(D.recos&&D.recos.length)) secs.splice(secs.indexOf('Para o próximo mês'),1);
+  const saudabilidade = D.saudFixed!=null ? D.saudFixed : Math.round((D.sentimento.posN + D.sentimento.neuN) / D.mencoes * 1000) / 10;
+  const mencoesFiltradas = excludeOutlier ? (DATA[activePeriod].mencoes - D.mencoes) : 0;
+
+  $('#content').innerHTML = `
+    <section class="block" style="margin-top:38px">${sec(++sn,'Visão geral','Instagram, Facebook e TikTok · fonte: plataforma de monitoramento')}
+      ${hasOut?`<div class="outlier-bar">
+        <label class="switch">
+          <input type="checkbox" id="outlierToggle" onchange="toggleOutlier()" ${excludeOutlier?'checked':''}>
+          <span class="switch-track"><span class="switch-thumb"></span></span>
+        </label>
+        <div class="outlier-bar-text">
+          <b>${D.outBar?D.outBar.title:''}</b>${D.outBar&&D.outBar.hover?ii(D.outBar.hover):''}
+          <span>${D.outBar?D.outBar.desc:'Isola o pico de menções, para ver o ritmo habitual da marca'}${excludeOutlier?` — <b>${nf(mencoesFiltradas)} menções filtradas</b> deste recorte`:''}.</span>
+        </div>
+      </div>`:''}
+      ${excludeOutlier&&D.outNote?`<p class="lead" style="margin:10px 0 0;font-size:12px;color:var(--muted)">${D.outNote}</p>`:excludeOutlier?`<p class="lead" style="margin:10px 0 0;font-size:12px;color:var(--muted)">Este filtro recalcula menções, sentimento e volume diário/semanal. As demais seções (motivos, audiência, usuários, vozes e conversas) seguem mostrando a leitura completa do mês, pico incluído${ii('')}.</p>`:''}
+      <p class="lead" style="margin:12px 0 12px;font-size:12.5px;color:var(--muted)">Passe o mouse sobre os números abaixo para mais detalhes.</p>
+      <div class="grid g-4">
+        <div class="card kpi kpi-hero kpi-hover"><div class="label">Menções no período</div><div class="value">${nf(D.mencoes)}</div><div class="foot">Instagram + Facebook + TikTok</div>${kpiPop(D.internoExterno.total.proprio, D.internoExterno.total.externo)}</div>
+        <div class="card kpi kpi-hover"><div class="label">Sentimento positivo</div><div class="value pos">${nf(D.sentimento.pos)}%</div><div class="foot">${nf(D.sentimento.posN)} menções</div>${kpiPop(D.internoExterno.pos.proprio, D.internoExterno.pos.externo)}</div>
+        <div class="card kpi kpi-hover"><div class="label">Sentimento neutro</div><div class="value neu">${nf(D.sentimento.neu)}%</div><div class="foot">${nf(D.sentimento.neuN)} menções</div>${kpiPop(D.internoExterno.neu.proprio, D.internoExterno.neu.externo)}</div>
+        <div class="card kpi kpi-hover"><div class="label">Sentimento negativo</div><div class="value neg">${nf(D.sentimento.neg)}%</div><div class="foot">${nf(D.sentimento.negN)} menções</div>${kpiPop(D.internoExterno.neg.proprio, D.internoExterno.neg.externo)}</div>
+      </div>
+
+      <div class="chart-panel" style="margin-top:14px">
+        <p class="chart-title">Menções por rede social</p>
+        <p class="chart-sub">Distribuição do volume total entre as redes monitoradas — toque na pizza para ver o número de menções</p>
+        <div class="sent-layout">
+          <p style="font-size:13.5px;color:var(--muted);font-weight:500;margin:0;max-width:34ch">O Instagram concentra quase toda a conversa monitorada; Facebook e TikTok têm volume residual no período.</p>
+          <div class="sent-legend">
+            ${D.redes.map(r=>`<span class="li"><span class="dot" style="background:${r.hex}"></span>${r.l}<b>${nf(r.pct)}%</b></span>`).join('')}
+          </div>
+          <div class="sent-donut-wrap"><canvas id="chartRedes" role="img" aria-label="Gráfico de rosca da distribuição de menções por rede social"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">${sec(++sn,'Volume diário')}
+      <p class="lead">${excludeOutlier&&T.volEx?T.volEx:T.vol?T.vol:excludeOutlier?'':''}</p>
+      <div class="chart-panel">
+        <p class="chart-title">Volume diário · ${D.diasLabel||''}${excludeOutlier?(' · '+(D.outShort||'')):''}</p>
+        <p class="chart-sub">Menções registradas em cada dia do mês, somando Instagram, Facebook e TikTok</p>
+        <div class="chart-wrap tall"><canvas id="chartTimeline" role="img" aria-label="${T.vol?('Gráfico de barras do volume diário de menções em '+per.label):excludeOutlier?'':''}"></canvas></div>
+      </div>
+    </section>
+
+    <section class="block">${sec(++sn,'Evolução e sazonalidade')}
+      <p class="lead">${excludeOutlier&&T.semEx?T.semEx:T.sem?T.sem:excludeOutlier?'':''}</p>
+      <div class="chart-panel">
+        <p class="chart-title">Volume por dia da semana${excludeOutlier?(' · '+(D.outShort||'')):''}</p>
+        <p class="chart-sub">${excludeOutlier&&T.semSubEx?T.semSubEx:T.semSub?T.semSub:excludeOutlier?'':''}</p>
+        <div class="chart-wrap"><canvas id="chartSemana" role="img" aria-label="Gráfico de barras do volume de menções por dia da semana"></canvas></div>
+      </div>
+    </section>
+
+    <section class="block">${sec(++sn,D.secPico?D.secPico.title:'O pico do mês')}${D.secPico?D.secPico.html():''}
+
+    </section>
+
+    <section class="block">${sec(++sn,'Sentimento das menções')}
+      <div class="chart-panel">
+        <p class="chart-title">Distribuição geral${ii('Dado disponível apenas para Facebook e Instagram.')}</p>
+        <p class="chart-sub">Participação de cada sentimento no total de menções — toque na pizza para ver o número de menções</p>
+        <div class="sent-layout tight3">
+          <div class="sent-legend">
+            <span class="li"><span class="dot" style="background:#0f8f5f"></span>Positivo<b>${nf(D.sentimento.pos)}%</b></span>
+            <span class="li"><span class="dot" style="background:#e0a51a"></span>Neutro<b>${nf(D.sentimento.neu)}%</b></span>
+            <span class="li"><span class="dot" style="background:#d1403a"></span>Negativo<b>${nf(D.sentimento.neg)}%</b></span>
+          </div>
+          <div class="sent-donut-wrap"><canvas id="chartSentimento" role="img" aria-label="Gráfico de rosca do sentimento das menções"></canvas></div>
+          <div class="kpi saud-box">
+            <div class="label">Saudabilidade${ii('Saudabilidade = (menções positivas + neutras) ÷ total de menções. Mede a fatia da conversa que não é hostil à marca.')}</div>
+            <div class="value pos">${nf(saudabilidade)}%</div>
+          </div>
+        </div>
+      </div>
+      <p class="lead" style="margin-top:16px">${excludeOutlier&&T.sentEx?T.sentEx:T.sent?T.sent:excludeOutlier?`Sem o pico do vídeo do Álvaro, o sentimento neutro passa a ser o maior (${nf(D.sentimento.neu)}%) — reflexo natural de uma base menor e mais concentrada em comentários e dúvidas do dia a dia. A fatia positiva fica em ${nf(D.sentimento.pos)}% e a negativa em ${nf(D.sentimento.neg)}%.`:`Quase metade das menções é positiva (${nf(D.sentimento.pos)}%) — a maior fatia do mês. A fatia neutra vem logo atrás (${nf(D.sentimento.neu)}%), puxada majoritariamente pelo pico da seção 4, que trouxe muito comentário reativo sem opinião formada sobre a marca. A negativa segue baixa (${nf(D.sentimento.neg)}%).`}</p>
+    </section>
+
+    ${D.sentTemas?`<section class="block">${sec(++sn,'Temas por sentimento')}
+      <p class="lead">${D.sentTemas.lead}</p>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(270px,1fr))">
+        ${D.sentTemas.cols.map(c=>`<div class="chart-panel"><p class="chart-title"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;background:${c.hex}"></span>${c.l}</p><p class="chart-sub" style="margin:10px 0 6px;font-weight:700">Por motivo</p>${hbarList(c.motivos,{labelWidth:170,valWidth:44,color:()=>c.hex})}<p class="chart-sub" style="margin:14px 0 6px;font-weight:700">Assuntos que mais aparecem</p>${hbarList(c.assuntos,{labelWidth:170,valWidth:44,color:()=>c.hex})}</div>`).join('')}
+      </div>
+      <p class="lead" style="margin-top:16px">${D.sentTemas.nota}</p>
+    </section>
+
+    `:''}<section class="block">${sec(++sn,'Perfil da audiência')}
+      <div class="chart-panel">
+        <p class="chart-title">Gênero${ii('Dado disponível apenas para Instagram — Facebook e TikTok não são considerados neste gráfico.')}</p>
+        <p class="chart-sub">Toque na pizza para ver o número de menções</p>
+        <div class="sent-layout tight2">
+          <div class="sent-legend">
+            ${D.genero.map(g=>`<span class="li"><span class="dot" style="background:${g.hex}"></span>${g.l}<b>${nf(g.v)}%</b></span>`).join('')}
+          </div>
+          <div class="sent-donut-wrap"><canvas id="chartGenero" role="img" aria-label="Gráfico de rosca do gênero da audiência"></canvas></div>
+        </div>
+      </div>
+      <p class="lead" style="margin-top:16px">${T.genero?T.genero:`Por que "Desconhecido" domina: 76,3% dos perfis não expõem gênero publicamente no Instagram — é uma limitação da plataforma, não um problema de coleta. Entre quem é identificável, o público é levemente mais feminino (12,4%) do que masculino (11,4%).`}</p>
+    </section>
+
+    <section class="block">${sec(++sn,'Vozes e conversas')}
+      <div class="grid g-2">
+        <div class="chart-panel" style="display:flex;flex-direction:column">
+          <p class="chart-title">Usuários mais engajados${ii('Dado disponível apenas para Instagram — Facebook e TikTok não são considerados neste gráfico.')}</p>
+          <p class="chart-sub">Maior número de interações no período</p>
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:center">${hbarList(D.topUsuarios)}</div>
+        </div>
+        <div class="chart-panel">
+          <p class="chart-title">Hashtags mais usadas pelo consumidor${ii('Dado disponível apenas para Instagram — Facebook e TikTok não são considerados neste gráfico.')}</p>
+          <p class="chart-sub">O público usa hashtags genéricas de fitness, não hashtags da marca</p>
+          <div class="chart-wrap" style="height:250px"><canvas id="chartHashtags" role="img" aria-label="Gráfico de barras das hashtags mais usadas pelo consumidor"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-panel" style="margin-top:14px">
+        <p class="chart-title">Emojis mais usados${ii('Dado disponível apenas para Instagram — Facebook e TikTok não são considerados neste gráfico.')}</p>
+        <p class="chart-sub">Tom predominante é de humor e afeto, não de reclamação — passe o mouse (ou toque) em cada emoji para ver o total</p>
+        ${emojiRow(D.emojis)}
+      </div>
+    </section>
+
+    <section class="block">${sec(++sn,'O que as pessoas comentam')}
+      <p class="lead">${T.termos?T.termos:''}</p>
+      <div class="chart-panel">
+        <p class="chart-title" style="margin-bottom:10px">Termos mais citados${ii('Dado disponível apenas para Instagram e TikTok — Facebook não é considerado neste gráfico.')}</p>
+        ${termCloud(D.assuntos)}
+      </div>
+      <p class="lead" style="margin-top:16px">${D.assuntosNota}</p>
+    </section>
+
+    <section class="block">${sec(++sn,'Usuários')}
+      <p class="lead">Além do sentimento e do assunto, cada menção também é marcada com o tipo de autor — cliente, parceiro, colaborador, influenciador ou não cliente. Isso ajuda a entender quem está gerando a conversa.</p>
+      <div class="chart-panel">
+        <p class="chart-title">Tipo de usuário${ii('Dado disponível apenas para Instagram — Facebook e TikTok não são considerados neste gráfico.')}</p>
+        <p class="chart-sub">Classificação do autor de cada menção — toque na pizza para ver o número de menções</p>
+        <div class="sent-layout tight3">
+          <div class="sent-legend">
+            ${D.usuarioTags.map(u=>`<span class="li"><span class="dot" style="background:${u.hex}"></span>${u.l}<b>${nf(u.pct)}%</b></span>`).join('')}
+          </div>
+          <div class="sent-donut-wrap"><canvas id="chartUsuarioTags" role="img" aria-label="Gráfico de rosca do tipo de usuário das menções"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">${sec(++sn,'Motivos')}
+      <p class="lead">Cada menção também recebe uma tag de motivo — do que ela trata, independente de quem fala.</p>
+      <div class="chart-panel">
+        <p class="chart-title">Categorização por motivo${ii('Dado disponível apenas para Instagram — Facebook e TikTok não são considerados neste gráfico.')}</p>
+        <p class="chart-sub">Passe o mouse sobre cada motivo para ver os principais assuntos dentro dele.</p>
+        ${hbarList(D.categorizacao.map(c=>({nm:c.l, v:c.n})), {labelWidth:200, valWidth:50, color:(i,idx)=>D.categorizacao[idx].hex, popover:(u)=>D.categorizacaoDetalhe[u.nm]||null})}
+      </div>
+
+      <div class="grid g-2" style="margin-top:16px">
+        ${topicCard('😍','Assuntos mais elogiados', D.categorizacaoDetalhe['Elogio'])}
+        ${topicCard('😠','Assuntos mais criticados', D.categorizacaoDetalhe['Crítica'])}
+      </div>
+      <div class="grid g-2" style="margin-top:14px">
+        ${topicCard('❓','Principais dúvidas', D.categorizacaoDetalhe['Dúvida'])}
+        ${topicCard('💡','Principais sugestões', D.categorizacaoDetalhe['Sugestão'])}
+      </div>
+    </section>
+
+    ${D.unidades?`<section class="block">${sec(++sn,'Unidades')}
+      <p class="lead">${D.unidades.lead}</p>
+      <div class="chart-panel">
+        <p class="chart-title">Volume de menções por unidade</p>
+        <p class="chart-sub">Unidades com mais menções no período — passe o mouse sobre cada unidade para ver os motivos das menções</p>
+        ${hbarList(D.unidades.volume,{labelWidth:150,valWidth:44,popover:(u)=>u.t||null})}
+      </div>
+      ${D.unidades.elogios?`<div class="grid g-3" style="margin-top:16px">
+        ${topicCard('😍','Unidades mais elogiadas', D.unidades.elogios)}
+        ${topicCard('😠','Unidades mais criticadas', D.unidades.criticas)}
+        ${topicCard('💬','Unidades mais comentadas', D.unidades.assuntos)}
+      </div>`:''}
+      ${D.unidades.destaques?`<p class="chart-title" style="margin:22px 0 10px">Leitura por unidade</p>
+      ${D.unidades.destaques.map(u=>`<div class="card" style="margin-bottom:12px;padding:16px 18px"><div style="display:flex;justify-content:space-between;gap:12px;font-weight:700"><span>${u.nm}</span><span style="color:var(--muted);font-weight:600">${nf(u.n)} menções</span></div><div class="segbar">${u.pos?`<span class="seg" style="flex:${u.pos};background:#0f8f5f" data-tip="Positivo: ${nf(u.pos)}"></span>`:''}${u.neu?`<span class="seg" style="flex:${u.neu};background:#e0a51a" data-tip="Neutro: ${nf(u.neu)}"></span>`:''}${u.neg?`<span class="seg" style="flex:${u.neg};background:#d1403a" data-tip="Negativo: ${nf(u.neg)}"></span>`:''}</div><p style="margin:0;font-size:13.5px;font-weight:500">${u.txt}</p></div>`).join('')}`:''}
+      <p class="lead" style="margin-top:16px">${D.unidades.nota}</p>
+    </section>
+
+    `:''}${D.posts&&D.posts.length?`<section class="block">${sec(++sn,'Posts mais engajados')}
+      <p class="lead">Os posts que mais geraram engajamento no mês, divididos em três grupos: o que a própria marca publicou, o que foi feito em parceria ou publicidade e o que terceiros publicaram espontaneamente.</p>
+      <p class="chart-title" style="margin:18px 0 4px">1. Publicados no perfil da marca</p>
+      <p class="chart-sub" style="margin-bottom:12px">${T.posts?T.posts:''}</p>
+      ${postCards(D.posts)}
+      ${D.postsParc&&D.postsParc.length?`
+      <p class="chart-title" style="margin:26px 0 4px">2. Colaboração, parceria e publicidade</p>
+      <p class="chart-sub" style="margin-bottom:12px">Posts de outros perfis feitos em parceria ou publicidade com a marca, identificados por termos como #publi, #publicidade, "parceria" e anúncios de contrato.</p>
+      ${postCards(D.postsParc)}`:''}
+      ${D.postsOrg&&D.postsOrg.length?`
+      <p class="chart-title" style="margin:26px 0 4px">3. Publicados espontaneamente por terceiros</p>
+      <p class="chart-sub" style="margin-bottom:12px">Posts de perfis externos que citam a marca sem sinal de parceria ou publicidade. Fonte: menções no Instagram no a plataforma de monitoramento, com curtidas e comentários no momento da coleta.</p>
+      ${postCards(D.postsOrg)}`:''}
+    </section>`:''}
+
+    <section class="block">${sec(++sn,'Insight do mês')}
+      ${D.insights?D.insights.map(i=>`<div class="note" style="margin-bottom:14px">
+        <div class="note-label">${i.label}</div>
+        <div class="insight-title">${i.title}</div>
+        <div class="insight-text">${i.text}</div>
+        ${i.links&&i.links.length?`<div style="margin-top:12px;display:flex;gap:18px;flex-wrap:wrap">${i.links.map(l=>`<a class="post-link" href="${l.href}" target="_blank" rel="noopener">${l.t} ↗</a>`).join('')}</div>`:''}
+      </div>`).join(''):`<div class="note">
+        <div class="note-label">Leitura da equipe</div>
+        <div class="insight-title">${D.insightTitle}</div>
+        <div class="insight-text">${D.insightText}</div>
+      </div>`}
+    </section>
+
+    ${D.recos&&D.recos.length?`<section class="block">${sec(++sn,'Para o próximo mês')}
+      ${D.recos.map((r,i)=>`${r.g&&(i===0||D.recos[i-1].g!==r.g)?`<p class="chart-title" style="margin:${i?24:6}px 0 10px">${r.g}</p>`:''}<div class="reco"><div class="n">${i+1}</div><div><h3>${r.t}</h3><p>${r.d}</p></div></div>`).join('')}
+    </section>`:''}
+
+    <div class="footer">
+      <span>Relatório mensal · versão demonstrativa com dados fictícios · desenvolvido por Júlia Aleixo · <a href="https://www.linkedin.com/in/julia-aleixo/" style="color:inherit">LinkedIn</a></span>
+    </div>
+  `;
+
+  $('#side').innerHTML = `<div class="side-title">Neste relatório</div>` +
+    secs.map((lab,i)=>`<a class="side-link" data-i="${i}" onclick="goSection(${i})"><span class="n">${i+1}</span>${lab}</a>`).join('');
+
+  renderTimelineChart(D.diario);
+  barChart('chartSemana', D.semana.map(s=>s.nm), D.semana.map(s=>s.v));
+  doughnut('chartRedes', D.redes.map(r=>r.l), D.redes.map(r=>r.pct), D.redes.map(r=>r.hex), D.redes.map(r=>r.v));
+  doughnut('chartUsuarioTags', D.usuarioTags.map(u=>u.l), D.usuarioTags.map(u=>u.pct), D.usuarioTags.map(u=>u.hex), D.usuarioTags.map(u=>u.n));
+  doughnut('chartSentimento', ['Positivo','Neutro','Negativo'], [D.sentimento.pos,D.sentimento.neu,D.sentimento.neg], ['#0f8f5f','#e0a51a','#d1403a'], [D.sentimento.posN,D.sentimento.neuN,D.sentimento.negN]);
+  doughnut('chartGenero', D.genero.map(g=>g.l), D.genero.map(g=>g.v), D.genero.map(g=>g.hex), D.genero.map(g=>g.n));
+  barChart('chartHashtags', D.hashtagsConsumidor.map(h=>h.nm), D.hashtagsConsumidor.map(h=>h.v));
+
+  setupScrollSpy();
+}
+
+function goSection(i){
+  const blocks = document.querySelectorAll('section.block');
+  if(blocks[i]) blocks[i].scrollIntoView({behavior:'smooth', block:'start'});
+}
+function setupScrollSpy(){
+  const blocks=[...document.querySelectorAll('section.block')];
+  const links=[...document.querySelectorAll('.side-link')];
+  const THRESHOLD = 118;
+  let ticking = false;
+  function update(){
+    ticking = false;
+    let cur=0;
+    blocks.forEach((b,i)=>{ if(b.getBoundingClientRect().top < THRESHOLD) cur=i; });
+    if(window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) cur = blocks.length - 1;
+    links.forEach(a=>a.classList.toggle('active', +a.dataset.i===cur));
+  }
+  function onScroll(){
+    if(!ticking){ requestAnimationFrame(update); ticking = true; }
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  update();
+}
+
+function renderPeriodMenu(){
+  const menu=$('#period-menu');
+  menu.innerHTML = `<div class="pm-group">Mensal</div>` + PERIODS.slice().reverse().map(p=>
+    `<button type="button" class="pm-item ${p.id===activePeriod?'active':''}" onclick="selectPeriod('${p.id}')">${p.label}<span class="pm-range">${p.range}</span></button>`
+  ).join('');
+}
+function togglePeriod(){ $('#period-menu').classList.toggle('open'); }
+function selectPeriod(id){ activePeriod=id; $('#period-menu').classList.remove('open'); renderPeriodMenu(); render(); }
+function toggleOutlier(){ excludeOutlier=!excludeOutlier; render(); }
+document.addEventListener('click', e=>{ if(!e.target.closest('.period-select')) $('#period-menu').classList.remove('open'); });
+
+$('#logo-marca').src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCAzMDAgODAiPjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iODAiIHJ4PSI4IiBmaWxsPSIjMDUwZDllIi8+PHRleHQgeD0iNTAlIiB5PSI1NSUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjI1IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjZmZmZmZmIj5MT0dPIERBIE1BUkNBPC90ZXh0Pjwvc3ZnPg==";
+
+renderPeriodMenu();
+render();
+</script>
+</body>
+</html>
